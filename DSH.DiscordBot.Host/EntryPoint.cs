@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using DSH.DiscordBot.Bot;
 using DSH.DiscordBot.Host.Service;
 using DSH.DiscordBot.Infrastructure.Configuration;
 using DSH.DiscordBot.Infrastructure.Logging;
@@ -61,6 +62,10 @@ namespace DSH.DiscordBot.Host
             builder.RegisterType<Service.Service>()
                 .As<IService>()
                 .SingleInstance();
+
+            builder.RegisterType<Bot.Bot>()
+                .As<IBot>()
+                .InstancePerLifetimeScope();
 
             return builder.Build();
         }

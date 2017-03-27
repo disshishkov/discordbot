@@ -1,6 +1,8 @@
 ﻿using System;
 using Autofac;
-using DSH.DiscordBot.Bot;
+using DSH.DiscordBot.Bots;
+using DSH.DiscordBot.Bots.Converters;
+using DSH.DiscordBot.Clients;
 using DSH.DiscordBot.Host.Service;
 using DSH.DiscordBot.Infrastructure.Configuration;
 using DSH.DiscordBot.Infrastructure.Logging;
@@ -63,8 +65,16 @@ namespace DSH.DiscordBot.Host
                 .As<IService>()
                 .SingleInstance();
 
-            builder.RegisterType<Bot.Bot>()
-                .As<IBot>()
+            builder.RegisterType<HeroTextConverter>()
+                .As<IHeroTextConverter>()
+                .SingleInstance();
+
+            builder.RegisterType<HotsHeroesBot>()
+                .As<IHotsHeroesBot>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<DiscordClient>()
+                .As<IDiscordClient>()
                 .InstancePerLifetimeScope();
 
             return builder.Build();

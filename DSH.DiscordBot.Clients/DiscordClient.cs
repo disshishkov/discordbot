@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using DSH.DiscordBot.Infrastructure.Configuration;
@@ -55,6 +56,19 @@ namespace DSH.DiscordBot.Clients
             _commandService.CreateCommand(name)
                 .Alias(aliases.ToArray())
                 .Do(async e => { await e.Channel.SendMessage(answer); });
+        }
+
+        public void AddAdminCommand(string name, string answer, Func<Task> func)
+        {
+            _log.Value.Info("DiscordClient AddAdminCommand: {0}", name);
+
+            _commandService.CreateCommand(name)
+                .AddCheck((_, user, __) => user.ToString() == _config.Value.AdminName)
+                .Do(async e =>
+                {
+                    await func();
+                    await e.Channel.SendMessage(answer);
+                });
         }
     }
 }

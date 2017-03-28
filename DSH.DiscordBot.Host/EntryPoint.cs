@@ -6,6 +6,8 @@ using DSH.DiscordBot.Clients;
 using DSH.DiscordBot.Host.Service;
 using DSH.DiscordBot.Infrastructure.Configuration;
 using DSH.DiscordBot.Infrastructure.Logging;
+using DSH.DiscordBot.Infrastructure.Serialization;
+using DSH.DiscordBot.Storage;
 using Topshelf;
 
 namespace DSH.DiscordBot.Host
@@ -51,7 +53,11 @@ namespace DSH.DiscordBot.Host
 
             builder.RegisterType<NLogLogger>()
                 .As<ILog>()
-                .SingleInstance();
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<JsonNetSerilizer>()
+                .As<ISerializer>()
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<AppSettings>()
                 .As<IAppSettings>()
@@ -68,6 +74,10 @@ namespace DSH.DiscordBot.Host
             builder.RegisterType<HeroTextConverter>()
                 .As<IHeroTextConverter>()
                 .SingleInstance();
+
+            builder.RegisterType<LiteDbStorage>()
+                .As<IStorage>()
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<HotsHeroesBot>()
                 .As<IHotsHeroesBot>()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using DSH.DiscordBot.Bots;
 using DSH.DiscordBot.Bots.Converters;
 using DSH.DiscordBot.Clients;
@@ -53,6 +54,9 @@ namespace DSH.DiscordBot.Host.Service
 
         private void AddCommands()
         {
+            _discordClient.Value.AddAdminCommand("update", "Done!",
+                () => Task.Delay(5000));
+
             var heroes = _hotsHeroesBot.Value.GetHeroes().ToArray();
 
             _discordClient.Value.AddCommand(

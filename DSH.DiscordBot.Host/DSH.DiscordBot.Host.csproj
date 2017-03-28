@@ -12,6 +12,7 @@
     <AssemblyName>DSH.DiscordBot.Host</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -74,6 +75,10 @@
     <ProjectReference Include="..\DSH.DiscordBot.Infrastructure\DSH.DiscordBot.Infrastructure.csproj">
       <Project>{a34e40e6-fefa-4e29-a158-97d6e40f9131}</Project>
       <Name>DSH.DiscordBot.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DSH.DiscordBot.Storage\DSH.DiscordBot.Storage.csproj">
+      <Project>{ACD2FDFB-B29C-49E6-A272-8EAE9C11A1C1}</Project>
+      <Name>DSH.DiscordBot.Storage</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

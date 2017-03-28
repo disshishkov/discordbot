@@ -4,6 +4,7 @@
     {
         string Token { get; }
         string DbConnectionString { get; }
+        string AdminName { get; }
         char CommandPrefix { get; }
     }
 }

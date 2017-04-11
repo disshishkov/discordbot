@@ -9,7 +9,7 @@ using LiteDB;
 
 namespace DSH.DiscordBot.Storage
 {
-    public sealed class LiteDbStorage : IStorage, IDisposable
+    public sealed class LiteDbStorage : IStorage
     {
         private readonly LiteRepository _db;
         private readonly Lazy<ILog> _log;
@@ -31,9 +31,7 @@ namespace DSH.DiscordBot.Storage
             _serializer = serializer;
             _db = new LiteRepository(config.Value.DbConnectionString);
 
-            BsonMapper.Global.RegisterType(
-                (uri) => uri.AbsoluteUri,
-                (bson) => new Uri(bson.AsString));
+            Configure();
         }
 
         public void Dispose()
@@ -43,6 +41,9 @@ namespace DSH.DiscordBot.Storage
 
         public void Insert<T>(T entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
             _log.Value.Debug(
                 "Inserted a new entity:{1}{0}",
                 _serializer.Value.Serialize(entity),
@@ -54,6 +55,10 @@ namespace DSH.DiscordBot.Storage
         public void Insert<T>(IEnumerable<T> entities)
         {
             var enumerable = entities as T[] ?? entities.ToArray();
+
+            if (!enumerable.Any())
+                throw new ArgumentNullException(nameof(entities));
+
             _log.Value.Debug(
                 "Inserted a new entities:{1}{0}",
                 _serializer.Value.Serialize(enumerable),
@@ -64,6 +69,9 @@ namespace DSH.DiscordBot.Storage
 
         public void Update<T>(T entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
             _log.Value.Debug(
                 "Updated existing entity to:{1}{0}",
                 _serializer.Value.Serialize(entity),
@@ -75,6 +83,10 @@ namespace DSH.DiscordBot.Storage
         public void Update<T>(IEnumerable<T> entities)
         {
             var enumerable = entities as T[] ?? entities.ToArray();
+
+            if (!enumerable.Any())
+                throw new ArgumentNullException(nameof(entities));
+
             _log.Value.Debug(
                 "Updated existing entities to:{1}{0}",
                 _serializer.Value.Serialize(enumerable),
@@ -85,6 +97,9 @@ namespace DSH.DiscordBot.Storage
 
         public void Delete<T>(Expression<Func<T, bool>> predicate)
         {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+
             _log.Value.Debug("Deleted existing entity");
 
             _db?.Delete(predicate);
@@ -92,9 +107,26 @@ namespace DSH.DiscordBot.Storage
 
         public List<T> Fetch<T>(Expression<Func<T, bool>> predicate)
         {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+
             _log.Value.Debug("Fetching entities");
 
             return _db?.Fetch(predicate);
+        }
+
+        public List<T> All<T>()
+        {
+            _log.Value.Debug("Getting all entities");
+
+            return _db?.Fetch<T>();
+        }
+
+        private static void Configure()
+        {
+            BsonMapper.Global.RegisterType(
+                (uri) => uri.AbsoluteUri,
+                (bson) => new Uri(bson.AsString));
         }
     }
 }

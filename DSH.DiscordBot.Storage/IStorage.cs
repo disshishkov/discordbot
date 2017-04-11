@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace DSH.DiscordBot.Storage
 {
-    public interface IStorage
+    public interface IStorage : IDisposable
     {
         void Insert<T>(T entity);
         void Insert<T>(IEnumerable<T> entities);
@@ -12,5 +12,6 @@ namespace DSH.DiscordBot.Storage
         void Update<T>(IEnumerable<T> entities);
         void Delete<T>(Expression<Func<T, bool>> predicate);
         List<T> Fetch<T>(Expression<Func<T, bool>> predicate);
+        List<T> All<T>();
     }
 }

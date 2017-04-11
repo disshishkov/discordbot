@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using DSH.DiscordBot.Bots;
 using DSH.DiscordBot.Bots.Converters;
 using DSH.DiscordBot.Clients;
+using DSH.DiscordBot.Contract.Dto;
 using DSH.DiscordBot.Infrastructure.Logging;
 
 namespace DSH.DiscordBot.Host.Service
@@ -52,24 +52,88 @@ namespace DSH.DiscordBot.Host.Service
             _discordClient.Value.Disconnect();
         }
 
+        private static Task<string> ExecuteCommand(Action func, string successMessage)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    func();
+                }
+                catch (Exception e)
+                {
+                    return $"Someting was wrong, see logs for details: {e.Message}";
+                }
+
+                return successMessage;
+            });
+        }
+
+        private static Build ParseBuild(string buildStr)
+        {
+            var build = new Build();
+            build.Title = "Default";
+
+            if (string.IsNullOrWhiteSpace(buildStr))
+                return build;
+
+            var parts = buildStr.Split('|');
+
+            // Just url is presented
+            if (parts.Length == 1)
+            {
+                build.Url = new Uri(parts[0].ToLowerInvariant());
+            }
+
+            // Title and urls are presented
+            if (parts.Length == 2)
+            {
+                build.Title = parts[0];
+                build.Url = new Uri(parts[1].ToLowerInvariant());
+            }
+
+            return build;
+        }
+
         private void AddCommands()
         {
-            _discordClient.Value.AddAdminCommand("update", "Done!",
-                () => Task.Delay(5000));
+            _discordClient.Value.AddAdminCommand("ку",
+                (_, __) => Task.Run(() => "Ку!"));
 
-            var heroes = _hotsHeroesBot.Value.GetHeroes().ToArray();
+            _discordClient.Value.AddAdminCommand("add_alias",
+                (heroName, alias) => ExecuteCommand(
+                    () => _hotsHeroesBot.Value.SaveAlias(heroName, alias),
+                    $"'{alias}' alias was succesfully added to hero '{heroName}'"));
 
-            _discordClient.Value.AddCommand(
-                "list",
-                new [] {"l", "tierlist"},
-                _heroesConverter.Value.Convert(heroes));
+            _discordClient.Value.AddAdminCommand("add_build",
+                (heroName, buildStr) =>
+                {
+                    var build = ParseBuild(buildStr);
+                    return ExecuteCommand(
+                        () => _hotsHeroesBot.Value.SaveBuild(heroName, build),
+                        $"'{build.Title}' build was succesfully added to hero '{heroName}'");
+                });
+
+            _discordClient.Value.AddAdminCommand("update",
+                (_, __) =>
+                {
+                    return Task.Run(() => "Done!");
+                });
+
+            var heroes = _hotsHeroesBot.Value.GetHeroes();
+
+            _discordClient.Value.AddCommand("list", new [] {"l", "tierlist"},
+                () => Task.Run(() => _heroesConverter.Value.Convert(heroes)));
+
+            if (heroes == null)
+                return;
 
             foreach (var hero in heroes)
             {
-                _discordClient.Value.AddCommand(
-                    hero.Name,
-                    hero.Aliases,
-                    _heroesConverter.Value.Convert(hero));
+                var heroDetails = _hotsHeroesBot.Value.GetHero(hero.Name);
+
+                _discordClient.Value.AddCommand(hero.Name, hero.Aliases,
+                    () => Task.Run(() => _heroesConverter.Value.Convert(heroDetails)));
             }
         }
     }

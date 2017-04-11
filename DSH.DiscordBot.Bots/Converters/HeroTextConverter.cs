@@ -9,13 +9,23 @@ namespace DSH.DiscordBot.Bots.Converters
     {
         public string Convert(Hero hero)
         {
+            if (hero == null)
+                return "А героя та нема";
+
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine($"{hero.Name}");
 
-            foreach (var build in hero.Builds)
+            if (!(hero.Builds?.Any() ?? false))
             {
-                sb.AppendLine($"{build.Title} - {build.Url}");
+                sb.AppendLine("Билдов нема");
+            }
+            else
+            {
+                foreach (var build in hero.Builds)
+                {
+                    sb.AppendLine($"{build.Title} - {build.Url}");
+                }
             }
 
             return sb.ToString();
@@ -23,12 +33,17 @@ namespace DSH.DiscordBot.Bots.Converters
 
         public string Convert(IEnumerable<Hero> heroes)
         {
+            var enumerable = heroes as Hero[] ?? heroes.ToArray();
+
+            if (!enumerable.Any())
+                return "А героев та нема";
+
             StringBuilder sb = new StringBuilder();
-            foreach (var hero in heroes)
+            foreach (var hero in enumerable)
             {
                 sb.AppendLine($"{hero.Name}");
                 sb.AppendLine($"Commands: {hero.Name.ToLowerInvariant()}, {string.Join(", ", hero.Aliases).ToLowerInvariant()}");
-                sb.AppendLine($"Builds: {hero.Builds.Count()}");
+                sb.AppendLine($"Builds: {hero.Builds?.Count() ?? 0}");
                 sb.AppendLine();
             }
 

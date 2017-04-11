@@ -35,38 +35,50 @@ namespace DSH.DiscordBot.Clients
             _commandService = _client.GetService<CommandService>();
         }
 
-        public async void Connect()
+        public void Connect()
         {
             _log.Value.Info("DiscordClient Connect");
 
-            await _client.Connect(_config.Value.Token, TokenType.Bot);
+            _client.ExecuteAndWait(async () =>
+            {
+                await _client.Connect(_config.Value.Token, TokenType.Bot);
+            });
         }
 
-        public async void Disconnect()
+        public void Disconnect()
         {
             _log.Value.Info("DiscordClient Disconnect");
 
-            await _client.Disconnect();
+            _client.ExecuteAndWait(async () =>
+            {
+                await _client.Disconnect();
+            });
         }
 
-        public void AddCommand(string name, IEnumerable<string> aliases, string answer)
+        public void AddCommand(string name, IEnumerable<string> aliases, Func<Task<string>> func)
         {
             _log.Value.Info("DiscordClient AddCommand: {0}", name);
 
             _commandService.CreateCommand(name)
                 .Alias(aliases.ToArray())
-                .Do(async e => { await e.Channel.SendMessage(answer); });
+                .Do(async e =>
+                {
+                    var answer = await func();
+                    await e.Channel.SendMessage(answer);
+                });
         }
 
-        public void AddAdminCommand(string name, string answer, Func<Task> func)
+        public void AddAdminCommand(string name, Func<string, string, Task<string>> func)
         {
             _log.Value.Info("DiscordClient AddAdminCommand: {0}", name);
 
             _commandService.CreateCommand(name)
                 .AddCheck((_, user, __) => user.ToString() == _config.Value.AdminName)
+                .Parameter("HeroName", ParameterType.Optional)
+                .Parameter("EntityToAdd", ParameterType.Optional)
                 .Do(async e =>
                 {
-                    await func();
+                    var answer = await func(e.GetArg("HeroName"), e.GetArg("EntityToAdd"));
                     await e.Channel.SendMessage(answer);
                 });
         }

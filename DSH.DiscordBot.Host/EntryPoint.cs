@@ -67,7 +67,7 @@ namespace DSH.DiscordBot.Host
                 .As<IConfig>()
                 .SingleInstance();
 
-            builder.RegisterType<Service.Service>()
+            builder.RegisterType<DiscordService>()
                 .As<IService>()
                 .SingleInstance();
 

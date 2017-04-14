@@ -8,14 +8,14 @@ using DSH.DiscordBot.Infrastructure.Logging;
 
 namespace DSH.DiscordBot.Host.Service
 {
-    public sealed class Service : IService
+    public sealed class DiscordService : IService
     {
         private readonly Lazy<ILog> _log;
         private readonly Lazy<IDiscordClient> _discordClient;
         private readonly Lazy<IHotsHeroesBot> _hotsHeroesBot;
         private readonly Lazy<IHeroTextConverter> _heroesConverter;
 
-        public Service(
+        public DiscordService(
             Lazy<ILog> log,
             Lazy<IDiscordClient> discordClient,
             Lazy<IHotsHeroesBot> hotsHeroesBot,

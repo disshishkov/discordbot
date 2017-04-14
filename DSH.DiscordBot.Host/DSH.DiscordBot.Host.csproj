@@ -54,7 +54,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Service\IService.cs" />
-    <Compile Include="Service\Service.cs" />
+    <Compile Include="Service\DiscordService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

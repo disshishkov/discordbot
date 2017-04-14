@@ -5,6 +5,7 @@ using DSH.DiscordBot.Bots.Converters;
 using DSH.DiscordBot.Clients;
 using DSH.DiscordBot.Contract.Dto;
 using DSH.DiscordBot.Infrastructure.Logging;
+using DSH.DiscordBot.Sources;
 
 namespace DSH.DiscordBot.Host.Service
 {
@@ -14,12 +15,14 @@ namespace DSH.DiscordBot.Host.Service
         private readonly Lazy<IDiscordClient> _discordClient;
         private readonly Lazy<IHotsHeroesBot> _hotsHeroesBot;
         private readonly Lazy<IHeroTextConverter> _heroesConverter;
+        private readonly Lazy<ISource> _source;
 
         public DiscordService(
             Lazy<ILog> log,
             Lazy<IDiscordClient> discordClient,
             Lazy<IHotsHeroesBot> hotsHeroesBot,
-            Lazy<IHeroTextConverter> heroesConverter)
+            Lazy<IHeroTextConverter> heroesConverter,
+            Lazy<ISource> source)
         {
             if (log == null)
                 throw new ArgumentNullException(nameof(log));
@@ -29,11 +32,14 @@ namespace DSH.DiscordBot.Host.Service
                 throw new ArgumentNullException(nameof(hotsHeroesBot));
             if (heroesConverter == null)
                 throw new ArgumentNullException(nameof(heroesConverter));
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
 
             _log = log;
             _discordClient = discordClient;
             _hotsHeroesBot = hotsHeroesBot;
             _heroesConverter = heroesConverter;
+            _source = source;
         }
 
         public void Start()
@@ -115,25 +121,25 @@ namespace DSH.DiscordBot.Host.Service
                 });
 
             _discordClient.Value.AddAdminCommand("update",
-                (_, __) =>
-                {
-                    return Task.Run(() => "Done!");
-                });
-
-            var heroes = _hotsHeroesBot.Value.GetHeroes();
+                (_, __) => ExecuteCommand(
+                    () => _hotsHeroesBot.Value.SaveHeroes(_source.Value.GetHeroes()),
+                    "Done!"));
 
             _discordClient.Value.AddCommand("list", new [] {"l", "tierlist"},
-                () => Task.Run(() => _heroesConverter.Value.Convert(heroes)));
+                () => Task.Run(() =>
+                    _heroesConverter.Value.Convert(
+                        _hotsHeroesBot.Value.GetHeroes())));
 
+            var heroes = _hotsHeroesBot.Value.GetHeroes();
             if (heroes == null)
                 return;
 
             foreach (var hero in heroes)
             {
-                var heroDetails = _hotsHeroesBot.Value.GetHero(hero.Name);
-
-                _discordClient.Value.AddCommand(hero.Name, hero.Aliases,
-                    () => Task.Run(() => _heroesConverter.Value.Convert(heroDetails)));
+                _discordClient.Value.AddCommand(hero.Name, hero.Aliases ?? new string[0],
+                    () => Task.Run(() =>
+                        _heroesConverter.Value.Convert(
+                            _hotsHeroesBot.Value.GetHero(hero.Name))));
             }
         }
     }

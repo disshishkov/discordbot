@@ -7,6 +7,7 @@ using DSH.DiscordBot.Host.Service;
 using DSH.DiscordBot.Infrastructure.Configuration;
 using DSH.DiscordBot.Infrastructure.Logging;
 using DSH.DiscordBot.Infrastructure.Serialization;
+using DSH.DiscordBot.Sources;
 using DSH.DiscordBot.Storage;
 using Topshelf;
 
@@ -85,6 +86,10 @@ namespace DSH.DiscordBot.Host
 
             builder.RegisterType<DiscordClient>()
                 .As<IDiscordClient>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<ScrapingSource>()
+                .As<ISource>()
                 .InstancePerLifetimeScope();
 
             return builder.Build();

@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSH.DiscordBot.Bots", "DSH.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSH.DiscordBot.Clients", "DSH.DiscordBot.Clients\DSH.DiscordBot.Clients.csproj", "{BD02D105-CD26-4870-A21B-23AEFEB24399}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSH.DiscordBot.Sources", "DSH.DiscordBot.Sources\DSH.DiscordBot.Sources.csproj", "{7E7D96E4-3D2C-4C2E-A193-63DFF55C87D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{BD02D105-CD26-4870-A21B-23AEFEB24399}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD02D105-CD26-4870-A21B-23AEFEB24399}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD02D105-CD26-4870-A21B-23AEFEB24399}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E7D96E4-3D2C-4C2E-A193-63DFF55C87D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E7D96E4-3D2C-4C2E-A193-63DFF55C87D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E7D96E4-3D2C-4C2E-A193-63DFF55C87D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E7D96E4-3D2C-4C2E-A193-63DFF55C87D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

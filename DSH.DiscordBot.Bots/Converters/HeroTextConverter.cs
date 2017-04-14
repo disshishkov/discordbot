@@ -42,7 +42,7 @@ namespace DSH.DiscordBot.Bots.Converters
             foreach (var hero in enumerable)
             {
                 sb.AppendLine($"{hero.Name}");
-                sb.AppendLine($"Commands: {hero.Name.ToLowerInvariant()}, {string.Join(", ", hero.Aliases).ToLowerInvariant()}");
+                sb.AppendLine($"Commands: {hero.Name.ToLowerInvariant()}, {string.Join(", ", hero.Aliases ?? new string[0]).ToLowerInvariant()}");
                 sb.AppendLine($"Builds: {hero.Builds?.Count() ?? 0}");
                 sb.AppendLine();
             }

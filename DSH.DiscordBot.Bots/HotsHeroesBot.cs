@@ -124,6 +124,46 @@ namespace DSH.DiscordBot.Bots
             }
         }
 
+        public void SaveHeroes(IEnumerable<Hero> heroes)
+        {
+            if (heroes == null)
+                throw new ArgumentNullException(nameof(heroes));
+
+            _log.Value.Info("Save heroes with builds");
+
+            foreach (var hero in heroes)
+            {
+                var addedBuilds = new Dictionary<string, IList<Uri>>();
+
+                foreach (var build in hero.Builds)
+                {
+                    SaveBuild(hero.Name, build);
+
+                    if (!addedBuilds.ContainsKey(build.Source))
+                    {
+                        addedBuilds.Add(build.Source, new List<Uri>() {build.Url});
+                    }
+                    else
+                    {
+                        addedBuilds[build.Source].Add(build.Url);
+                    }
+                }
+
+                foreach (var addedBuild in addedBuilds)
+                {
+                    _log.Value.Info("Clear old builds for hero '{0}' from source '{1}'", hero.Name, addedBuild.Key);
+
+                    var heroInStorage = GetHero(hero.Name);
+                    var builds = heroInStorage.Builds
+                        .Where(_ => _.Source != addedBuild.Key || addedBuild.Value.Contains(_.Url))
+                        .ToArray();
+
+                    heroInStorage.Builds = builds;
+                    _storage.Value.Update(heroInStorage);
+                }
+            }
+        }
+
         private static string GetId(string name)
         {
             if (string.IsNullOrWhiteSpace(name))

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DSH.DiscordBot.Infrastructure.Configuration
 {
@@ -18,5 +19,17 @@ namespace DSH.DiscordBot.Infrastructure.Configuration
         public string DbConnectionString => _settings.Value.Get()["DbConnectionString"];
         public string AdminName => _settings.Value.Get()["AdminName"];
         public char CommandPrefix => _settings.Value.Get()["CommandPrefix"][0];
+
+        public IEnumerable<string> Sources
+        {
+            get
+            {
+                var sourcesStr = _settings.Value.Get()["Sources"];
+
+                return string.IsNullOrWhiteSpace(sourcesStr)
+                    ? null
+                    : sourcesStr.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+            }
+        }
     }
 }

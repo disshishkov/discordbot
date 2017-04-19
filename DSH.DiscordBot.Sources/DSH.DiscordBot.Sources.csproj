@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -51,6 +54,13 @@
       <Project>{CFB56956-C13C-4833-AF51-905124090B85}</Project>
       <Name>DSH.DiscordBot.Contract</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DSH.DiscordBot.Infrastructure\DSH.DiscordBot.Infrastructure.csproj">
+      <Project>{A34E40E6-FEFA-4E29-A158-97D6E40F9131}</Project>
+      <Name>DSH.DiscordBot.Infrastructure</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

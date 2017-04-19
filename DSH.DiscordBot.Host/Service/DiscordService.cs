@@ -58,23 +58,6 @@ namespace DSH.DiscordBot.Host.Service
             _discordClient.Value.Disconnect();
         }
 
-        private static Task<string> ExecuteCommand(Action func, string successMessage)
-        {
-            return Task.Run(() =>
-            {
-                try
-                {
-                    func();
-                }
-                catch (Exception e)
-                {
-                    return $"Someting was wrong, see logs for details: {e.Message}";
-                }
-
-                return successMessage;
-            });
-        }
-
         private static Build ParseBuild(string buildStr)
         {
             var build = new Build();
@@ -99,6 +82,25 @@ namespace DSH.DiscordBot.Host.Service
             }
 
             return build;
+        }
+
+        private Task<string> ExecuteCommand(Action func, string successMessage)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    func();
+                }
+                catch (Exception e)
+                {
+                    _log.Value.Error(e);
+
+                    return $"Someting was wrong, see logs for details: {e.Message}";
+                }
+
+                return successMessage;
+            });
         }
 
         private void AddCommands()

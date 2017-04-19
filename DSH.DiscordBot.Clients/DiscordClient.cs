@@ -11,6 +11,9 @@ namespace DSH.DiscordBot.Clients
 {
     public sealed class DiscordClient : IDiscordClient
     {
+        // Discord has a 2000 lenght limit for the one message.
+        private const int MaxMessageLenght = 2000;
+
         private readonly Lazy<ILog> _log;
         private readonly Lazy<IConfig> _config;
         private readonly Discord.DiscordClient _client;
@@ -29,7 +32,7 @@ namespace DSH.DiscordBot.Clients
 
             _client.UsingCommands(_ => {
                 _.PrefixChar = _config.Value.CommandPrefix;
-                _.HelpMode = HelpMode.Public;
+                _.HelpMode = HelpMode.Disabled;
             });
 
             _commandService = _client.GetService<CommandService>();
@@ -64,7 +67,7 @@ namespace DSH.DiscordBot.Clients
                 .Do(async e =>
                 {
                     var answer = await func();
-                    await e.Channel.SendMessage(answer);
+                    await SendMessage(answer, e);
                 });
         }
 
@@ -79,8 +82,32 @@ namespace DSH.DiscordBot.Clients
                 .Do(async e =>
                 {
                     var answer = await func(e.GetArg("HeroName"), e.GetArg("EntityToAdd"));
-                    await e.Channel.SendMessage(answer);
+                    await SendMessage(answer, e);
                 });
+        }
+
+        private static async Task SendMessage(string message, CommandEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+                return;
+
+            if (message.Length <= MaxMessageLenght)
+            {
+                await e.Channel.SendMessage(message);
+            }
+            else
+            {
+                foreach (var msg in ChunksUpto(message, MaxMessageLenght))
+                {
+                    await e.Channel.SendMessage(msg);
+                }
+            }
+        }
+
+        private static IEnumerable<string> ChunksUpto(string str, int maxChunkSize)
+        {
+            for (int i = 0; i < str.Length; i += maxChunkSize)
+                yield return str.Substring(i, Math.Min(maxChunkSize, str.Length-i));
         }
     }
 }

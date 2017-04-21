@@ -38,24 +38,18 @@ namespace DSH.DiscordBot.Clients
             _commandService = _client.GetService<CommandService>();
         }
 
-        public void Connect()
+        public async void Connect()
         {
             _log.Value.Info("DiscordClient Connect");
 
-            _client.ExecuteAndWait(async () =>
-            {
-                await _client.Connect(_config.Value.Token, TokenType.Bot);
-            });
+            await _client.Connect(_config.Value.Token, TokenType.Bot);
         }
 
-        public void Disconnect()
+        public async void Disconnect()
         {
             _log.Value.Info("DiscordClient Disconnect");
 
-            _client.ExecuteAndWait(async () =>
-            {
-                await _client.Disconnect();
-            });
+            await _client.Disconnect();
         }
 
         public void AddCommand(string name, IEnumerable<string> aliases, Func<Task<string>> func)

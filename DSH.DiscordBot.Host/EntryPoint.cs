@@ -34,7 +34,7 @@ namespace DSH.DiscordBot.Host
                         _.WhenStarted(host => host.Start());
                         _.WhenStopped(host => host.Stop());
 
-                        _.AfterStartingService(() => Console.WriteLine(@"DiscordBot Host started"));
+                        _.AfterStartingService(() => log.Info("DiscordBot Host started"));
                     });
                     config.StartAutomatically();
                     config.SetServiceName("DSH_DiscordBot_Host_System_Service");

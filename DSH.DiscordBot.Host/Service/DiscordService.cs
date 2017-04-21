@@ -42,20 +42,24 @@ namespace DSH.DiscordBot.Host.Service
             _source = source;
         }
 
-        public void Start()
+        public bool Start()
         {
             _log.Value.Info("Service Start");
 
             AddCommands();
 
             _discordClient.Value.Connect();
+
+            return true;
         }
 
-        public void Stop()
+        public bool Stop()
         {
             _log.Value.Info("Service Stop");
 
             _discordClient.Value.Disconnect();
+
+            return true;
         }
 
         private static Build ParseBuild(string buildStr)
@@ -74,11 +78,19 @@ namespace DSH.DiscordBot.Host.Service
                 build.Url = new Uri(parts[0].ToLowerInvariant());
             }
 
-            // Title and urls are presented
+            // Title and url are presented
             if (parts.Length == 2)
             {
                 build.Title = parts[0];
                 build.Url = new Uri(parts[1].ToLowerInvariant());
+            }
+
+            // Title, url and source are presented
+            if (parts.Length == 3)
+            {
+                build.Title = parts[0];
+                build.Url = new Uri(parts[1].ToLowerInvariant());
+                build.Source = parts[2];
             }
 
             return build;

@@ -14,7 +14,7 @@ namespace DSH.DiscordBot.Bots.Converters
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"{hero.Name}");
+            sb.AppendLine($"`{hero.Name}`");
 
             if (!(hero.Builds?.Any() ?? false))
             {
@@ -41,7 +41,7 @@ namespace DSH.DiscordBot.Bots.Converters
             StringBuilder sb = new StringBuilder();
             foreach (var hero in enumerable)
             {
-                sb.AppendLine($"{hero.Name}");
+                sb.AppendLine($"`{hero.Name}`");
                 sb.AppendLine($"Commands: {hero.Name.ToLowerInvariant()}, {string.Join(", ", hero.Aliases ?? new string[0]).ToLowerInvariant()}");
                 sb.AppendLine($"Builds: {hero.Builds?.Count() ?? 0}");
                 sb.AppendLine();

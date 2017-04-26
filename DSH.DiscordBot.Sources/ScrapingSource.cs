@@ -50,6 +50,9 @@ namespace DSH.DiscordBot.Sources
 
             foreach (var url in sourceUrls)
             {
+                if (string.IsNullOrWhiteSpace(url))
+                    continue;
+
                 _log.Value.Info("Get heroes from {0}", url);
 
                 var html = new HtmlDocument();
@@ -95,7 +98,7 @@ namespace DSH.DiscordBot.Sources
         private IEnumerable<Build> GetHeroBuilds(HtmlNode node, string sourceName)
         {
             var builds = new List<Build>();
-            var aNodes = node?.SelectNodes("./td[2]/ul/li/a");
+            var aNodes = node?.SelectNodes("./td[2]/ul/li/span/a");
 
             if (aNodes == null)
                 return null;

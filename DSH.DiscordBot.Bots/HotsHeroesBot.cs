@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DSH.DiscordBot.Contract.Dto;
 using DSH.DiscordBot.Infrastructure.Logging;
+using DSH.DiscordBot.Infrastructure.Serialization;
 using DSH.DiscordBot.Storage;
 
 namespace DSH.DiscordBot.Bots
@@ -10,16 +11,23 @@ namespace DSH.DiscordBot.Bots
     public sealed class HotsHeroesBot : IHotsHeroesBot
     {
         private readonly Lazy<ILog> _log;
+        private readonly Lazy<ISerializer> _serializer;
         private readonly Lazy<IStorage> _storage;
 
-        public HotsHeroesBot(Lazy<ILog> log, Lazy<IStorage> storage)
+        public HotsHeroesBot(
+            Lazy<ILog> log,
+            Lazy<ISerializer> serializer,
+            Lazy<IStorage> storage)
         {
             if (log == null)
                 throw new ArgumentNullException(nameof(log));
+            if (serializer == null)
+                throw new ArgumentNullException(nameof(serializer));
             if (storage == null)
                 throw new ArgumentNullException(nameof(storage));
 
             _log = log;
+            _serializer = serializer;
             _storage = storage;
         }
 
@@ -133,7 +141,7 @@ namespace DSH.DiscordBot.Bots
 
             foreach (var hero in heroes)
             {
-                var addedBuilds = new Dictionary<string, IList<Uri>>();
+                var addedBuilds = new Dictionary<string, IList<string>>();
 
                 foreach (var build in hero.Builds)
                 {
@@ -141,13 +149,18 @@ namespace DSH.DiscordBot.Bots
 
                     if (!addedBuilds.ContainsKey(build.Source))
                     {
-                        addedBuilds.Add(build.Source, new List<Uri>() {build.Url});
+                        addedBuilds.Add(build.Source, new List<string>() {build.Url.AbsoluteUri});
                     }
                     else
                     {
-                        addedBuilds[build.Source].Add(build.Url);
+                        addedBuilds[build.Source].Add(build.Url.AbsoluteUri);
                     }
                 }
+
+                _log.Value.Debug("Added builds for hero '{1}':{0}{2}",
+                    Environment.NewLine,
+                    hero.Name,
+                    _serializer.Value.Serialize(addedBuilds));
 
                 foreach (var addedBuild in addedBuilds)
                 {
@@ -155,7 +168,7 @@ namespace DSH.DiscordBot.Bots
 
                     var heroInStorage = GetHero(hero.Name);
                     var builds = heroInStorage.Builds
-                        .Where(_ => _.Source != addedBuild.Key || addedBuild.Value.Contains(_.Url))
+                        .Where(_ => _.Source != addedBuild.Key || addedBuild.Value.Contains(_.Url.AbsoluteUri))
                         .ToArray();
 
                     heroInStorage.Builds = builds;

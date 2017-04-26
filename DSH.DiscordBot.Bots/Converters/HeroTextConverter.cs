@@ -33,16 +33,17 @@ namespace DSH.DiscordBot.Bots.Converters
 
         public string Convert(IEnumerable<Hero> heroes)
         {
-            var enumerable = heroes as Hero[] ?? heroes.ToArray();
+            var enumerable = heroes as Hero[] ?? heroes?.ToArray();
 
-            if (!enumerable.Any())
+            if (!(enumerable?.Any() ?? false))
                 return "А героев та нема";
 
             StringBuilder sb = new StringBuilder();
             foreach (var hero in enumerable)
             {
                 sb.AppendLine($"`{hero.Name}`");
-                sb.AppendLine($"Commands: {hero.Name.ToLowerInvariant()}, {string.Join(", ", hero.Aliases ?? new string[0]).ToLowerInvariant()}");
+                sb.AppendLine($"Commands: {hero.Name.ToLowerInvariant()}, " +
+                              $"{string.Join(", ", hero.Aliases ?? new string[0]).ToLowerInvariant()}");
                 sb.AppendLine($"Builds: {hero.Builds?.Count() ?? 0}");
                 sb.AppendLine();
             }

@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bots\HeroTextConverterTests.cs" />
     <Compile Include="Infrastructure\ConfigTests.cs" />
     <Compile Include="Sources\ScrapingSourceTests.cs" />
     <Compile Include="..\AssemblyInfo.Common.cs">
@@ -62,6 +63,10 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DSH.DiscordBot.Bots\DSH.DiscordBot.Bots.csproj">
+      <Project>{A45E8FA9-3AFD-4A36-A5FD-8E5D367CAB2C}</Project>
+      <Name>DSH.DiscordBot.Bots</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DSH.DiscordBot.Contract\DSH.DiscordBot.Contract.csproj">
       <Project>{cfb56956-c13c-4833-af51-905124090b85}</Project>
       <Name>DSH.DiscordBot.Contract</Name>

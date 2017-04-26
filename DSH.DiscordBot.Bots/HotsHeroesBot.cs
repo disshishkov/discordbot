@@ -177,6 +177,40 @@ namespace DSH.DiscordBot.Bots
             }
         }
 
+        public Build ParseBuild(string buildStr)
+        {
+            var build = new Build();
+            build.Title = "Default";
+
+            if (string.IsNullOrWhiteSpace(buildStr))
+                return build;
+
+            var parts = buildStr.Split('|');
+
+            // Just url is presented
+            if (parts.Length == 1)
+            {
+                build.Url = new Uri(parts[0].ToLowerInvariant());
+            }
+
+            // Title and url are presented
+            if (parts.Length == 2)
+            {
+                build.Title = parts[0];
+                build.Url = new Uri(parts[1].ToLowerInvariant());
+            }
+
+            // Title, url and source are presented
+            if (parts.Length == 3)
+            {
+                build.Title = parts[0];
+                build.Url = new Uri(parts[1].ToLowerInvariant());
+                build.Source = parts[2];
+            }
+
+            return build;
+        }
+
         private static string GetId(string name)
         {
             if (string.IsNullOrWhiteSpace(name))

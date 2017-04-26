@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using DSH.DiscordBot.Bots;
 using DSH.DiscordBot.Bots.Converters;
 using DSH.DiscordBot.Clients;
-using DSH.DiscordBot.Contract.Dto;
 using DSH.DiscordBot.Infrastructure.Logging;
 using DSH.DiscordBot.Sources;
 
@@ -62,40 +61,6 @@ namespace DSH.DiscordBot.Host.Service
             return true;
         }
 
-        private static Build ParseBuild(string buildStr)
-        {
-            var build = new Build();
-            build.Title = "Default";
-
-            if (string.IsNullOrWhiteSpace(buildStr))
-                return build;
-
-            var parts = buildStr.Split('|');
-
-            // Just url is presented
-            if (parts.Length == 1)
-            {
-                build.Url = new Uri(parts[0].ToLowerInvariant());
-            }
-
-            // Title and url are presented
-            if (parts.Length == 2)
-            {
-                build.Title = parts[0];
-                build.Url = new Uri(parts[1].ToLowerInvariant());
-            }
-
-            // Title, url and source are presented
-            if (parts.Length == 3)
-            {
-                build.Title = parts[0];
-                build.Url = new Uri(parts[1].ToLowerInvariant());
-                build.Source = parts[2];
-            }
-
-            return build;
-        }
-
         private Task<string> ExecuteCommand(Action func, string successMessage)
         {
             return Task.Run(() =>
@@ -128,7 +93,7 @@ namespace DSH.DiscordBot.Host.Service
             _discordClient.Value.AddAdminCommand("add_build",
                 (heroName, buildStr) =>
                 {
-                    var build = ParseBuild(buildStr);
+                    var build = _hotsHeroesBot.Value.ParseBuild(buildStr);
                     return ExecuteCommand(
                         () => _hotsHeroesBot.Value.SaveBuild(heroName, build),
                         $"'{build.Title}' build was succesfully added to hero '{heroName}'");

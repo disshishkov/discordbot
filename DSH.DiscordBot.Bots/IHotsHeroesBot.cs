@@ -10,5 +10,6 @@ namespace DSH.DiscordBot.Bots
         void SaveAlias(string heroName, string alias);
         void SaveBuild(string heroName, Build build);
         void SaveHeroes(IEnumerable<Hero> heroes);
+        Build ParseBuild(string buildStr);
     }
 }

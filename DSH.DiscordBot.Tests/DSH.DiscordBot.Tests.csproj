@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bots\HeroTextConverterTests.cs" />
+    <Compile Include="Bots\HotsHeroesBotTests.cs" />
     <Compile Include="Infrastructure\ConfigTests.cs" />
     <Compile Include="Sources\ScrapingSourceTests.cs" />
     <Compile Include="..\AssemblyInfo.Common.cs">
@@ -78,6 +79,10 @@
     <ProjectReference Include="..\DSH.DiscordBot.Sources\DSH.DiscordBot.Sources.csproj">
       <Project>{7E7D96E4-3D2C-4C2E-A193-63DFF55C87D4}</Project>
       <Name>DSH.DiscordBot.Sources</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DSH.DiscordBot.Storage\DSH.DiscordBot.Storage.csproj">
+      <Project>{ACD2FDFB-B29C-49E6-A272-8EAE9C11A1C1}</Project>
+      <Name>DSH.DiscordBot.Storage</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

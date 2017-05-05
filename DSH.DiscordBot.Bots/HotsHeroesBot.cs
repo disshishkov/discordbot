@@ -143,8 +143,16 @@ namespace DSH.DiscordBot.Bots
             {
                 var addedBuilds = new Dictionary<string, IList<string>>();
 
+                if (hero.Builds == null)
+                    continue;
+
                 foreach (var build in hero.Builds)
                 {
+                    if (string.IsNullOrWhiteSpace(build.Source))
+                        continue;
+                    if (build.Url == null)
+                        continue;
+
                     SaveBuild(hero.Name, build);
 
                     if (!addedBuilds.ContainsKey(build.Source))

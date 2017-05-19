@@ -98,7 +98,11 @@ namespace DSH.DiscordBot.Sources
         private IEnumerable<Build> GetHeroBuilds(HtmlNode node, string sourceName)
         {
             var builds = new List<Build>();
-            var aNodes = node?.SelectNodes("./td[2]/ul/li/span/a");
+            var aNodes = node?.SelectNodes("./td[2]/ul/li/span/a")
+                ?? node?.SelectNodes("./td[2]/ul/li/strong/a")
+                ?? node?.SelectNodes("./td[2]/ul/li/span/strong/a")
+                ?? node?.SelectNodes("./td[2]/ul/li/strong/span/a")
+                ?? node?.SelectNodes("./td[2]/ul/li/a");
 
             if (aNodes == null)
                 return null;

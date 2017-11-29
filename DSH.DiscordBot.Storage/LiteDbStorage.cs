@@ -20,15 +20,11 @@ namespace DSH.DiscordBot.Storage
             Lazy<IConfig> config,
             Lazy<ISerializer> serializer)
         {
-            if (log == null)
-                throw new ArgumentNullException(nameof(log));
             if (config == null)
                 throw new ArgumentNullException(nameof(config));
-            if (serializer == null)
-                throw new ArgumentNullException(nameof(serializer));
 
-            _log = log;
-            _serializer = serializer;
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _db = new LiteRepository(config.Value.DbConnectionString);
 
             Configure();

@@ -8,6 +8,7 @@ using DSH.DiscordBot.Sources;
 
 namespace DSH.DiscordBot.Host.Service
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class DiscordService : IService
     {
         private readonly Lazy<ILog> _log;
@@ -23,22 +24,11 @@ namespace DSH.DiscordBot.Host.Service
             Lazy<IHeroTextConverter> heroesConverter,
             Lazy<ISource> source)
         {
-            if (log == null)
-                throw new ArgumentNullException(nameof(log));
-            if (discordClient == null)
-                throw new ArgumentNullException(nameof(discordClient));
-            if (hotsHeroesBot == null)
-                throw new ArgumentNullException(nameof(hotsHeroesBot));
-            if (heroesConverter == null)
-                throw new ArgumentNullException(nameof(heroesConverter));
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            _log = log;
-            _discordClient = discordClient;
-            _hotsHeroesBot = hotsHeroesBot;
-            _heroesConverter = heroesConverter;
-            _source = source;
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _discordClient = discordClient ?? throw new ArgumentNullException(nameof(discordClient));
+            _hotsHeroesBot = hotsHeroesBot ?? throw new ArgumentNullException(nameof(hotsHeroesBot));
+            _heroesConverter = heroesConverter ?? throw new ArgumentNullException(nameof(heroesConverter));
+            _source = source ?? throw new ArgumentNullException(nameof(source));
         }
 
         public bool Start()

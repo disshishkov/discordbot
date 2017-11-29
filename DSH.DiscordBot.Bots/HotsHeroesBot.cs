@@ -19,16 +19,9 @@ namespace DSH.DiscordBot.Bots
             Lazy<ISerializer> serializer,
             Lazy<IStorage> storage)
         {
-            if (log == null)
-                throw new ArgumentNullException(nameof(log));
-            if (serializer == null)
-                throw new ArgumentNullException(nameof(serializer));
-            if (storage == null)
-                throw new ArgumentNullException(nameof(storage));
-
-            _log = log;
-            _serializer = serializer;
-            _storage = storage;
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         }
 
         public Hero GetHero(string name)

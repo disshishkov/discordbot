@@ -22,19 +22,10 @@ namespace DSH.DiscordBot.Sources
             Lazy<ISerializer> serializer,
             Lazy<IClient> client)
         {
-            if (log == null)
-                throw new ArgumentNullException(nameof(log));
-            if (config == null)
-                throw new ArgumentNullException(nameof(config));
-            if (serializer == null)
-                throw new ArgumentNullException(nameof(serializer));
-            if (client == null)
-                throw new ArgumentNullException(nameof(client));
-
-            _log = log;
-            _config = config;
-            _serializer = serializer;
-            _client = client;
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         public IEnumerable<Hero> GetHeroes()
@@ -68,8 +59,7 @@ namespace DSH.DiscordBot.Sources
                     var name = GetHeroName(trNode);
                     var builds = GetHeroBuilds(trNode, url);
 
-                    if (!string.IsNullOrWhiteSpace(name)
-                        && builds != null)
+                    if (!string.IsNullOrWhiteSpace(name) && builds != null)
                     {
                         _log.Value.Debug("Scrapped builds for hero '{0}'", name);
 

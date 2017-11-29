@@ -8,6 +8,6 @@ namespace DSH.DiscordBot.Infrastructure.Configuration
         string Token { get; }
         string DbConnectionString { get; }
         string AdminName { get; }
-        char CommandPrefix { get; }
+        string CommandPrefix { get; }
     }
 }

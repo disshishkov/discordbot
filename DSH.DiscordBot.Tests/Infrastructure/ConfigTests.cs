@@ -61,7 +61,7 @@ namespace DSH.DiscordBot.Tests.Infrastructure
         [Test]
         public void Can_Obtain_CommandPrefix()
         {
-            Assert.AreEqual('!', _config.CommandPrefix);
+            Assert.AreEqual("!", _config.CommandPrefix);
         }
 
         [Test]

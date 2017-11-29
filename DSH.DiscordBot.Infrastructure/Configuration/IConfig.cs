@@ -7,7 +7,6 @@ namespace DSH.DiscordBot.Infrastructure.Configuration
         IEnumerable<string> Sources { get; }
         string Token { get; }
         string DbConnectionString { get; }
-        string AdminName { get; }
         string CommandPrefix { get; }
     }
 }

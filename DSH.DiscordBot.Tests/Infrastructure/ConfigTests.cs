@@ -53,12 +53,6 @@ namespace DSH.DiscordBot.Tests.Infrastructure
         }
 
         [Test]
-        public void Can_Obtain_AdminName()
-        {
-            Assert.AreEqual("TestAdmin", _config.AdminName);
-        }
-
-        [Test]
         public void Can_Obtain_CommandPrefix()
         {
             Assert.AreEqual("!", _config.CommandPrefix);

@@ -51,13 +51,27 @@
       <Link>Properties\AssemblyInfo.Common.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Commands\AdminCommands.cs" />
+    <Compile Include="Commands\HeroesCommands.cs" />
     <Compile Include="DiscordClient.cs" />
     <Compile Include="IDiscordClient.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DSH.DiscordBot.Bots\DSH.DiscordBot.Bots.csproj">
+      <Project>{A45E8FA9-3AFD-4A36-A5FD-8E5D367CAB2C}</Project>
+      <Name>DSH.DiscordBot.Bots</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DSH.DiscordBot.Contract\DSH.DiscordBot.Contract.csproj">
+      <Project>{cfb56956-c13c-4833-af51-905124090b85}</Project>
+      <Name>DSH.DiscordBot.Contract</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DSH.DiscordBot.Infrastructure\DSH.DiscordBot.Infrastructure.csproj">
       <Project>{A34E40E6-FEFA-4E29-A158-97D6E40F9131}</Project>
       <Name>DSH.DiscordBot.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DSH.DiscordBot.Sources\DSH.DiscordBot.Sources.csproj">
+      <Project>{7E7D96E4-3D2C-4C2E-A193-63DFF55C87D4}</Project>
+      <Name>DSH.DiscordBot.Sources</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

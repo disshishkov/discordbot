@@ -6,6 +6,7 @@ namespace DSH.DiscordBot.Bots
     public interface IHotsHeroesBot
     {
         Hero GetHero(string name);
+        Hero GetHeroByAlias(string alias);
         IEnumerable<Hero> GetHeroes();
         void SaveAlias(string heroName, string alias);
         void SaveBuild(string heroName, Build build);

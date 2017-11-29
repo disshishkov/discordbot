@@ -115,6 +115,49 @@ namespace DSH.DiscordBot.Tests.Bots
             Assert.IsNotNull(hero);
             Assert.AreEqual("Test", hero.Name);
         }
+        
+        [Test]
+        public void GetHeroByAlias_Throws_If_Alias_Is_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.GetHeroByAlias(null);
+            });
+        }
+
+        [Test]
+        public void GetHeroByAlias_Throws_If_Alias_Is_Empty()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.GetHeroByAlias(string.Empty);
+            });
+        }
+
+        [Test]
+        public void GetHeroByAlias_Throws_If_Alias_Is_WhiteSpace()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.GetHeroByAlias("    ");
+            });
+        }
+        
+        [Test]
+        public void GetHeroByAlias_Can_Returns_Hero_By_Name()
+        {
+            var hero = _bot.GetHeroByAlias("Test");
+            Assert.IsNotNull(hero);
+            Assert.AreEqual("Test", hero.Name);
+        }
+        
+        [Test]
+        public void GetHeroByAlias_Can_Returns_Hero_By_Alias()
+        {
+            var hero = _bot.GetHeroByAlias("t");
+            Assert.IsNotNull(hero);
+            Assert.AreEqual("Test", hero.Name);
+        }
 
         [Test]
         public void GetHeroes_Can_Returns_Heroes()

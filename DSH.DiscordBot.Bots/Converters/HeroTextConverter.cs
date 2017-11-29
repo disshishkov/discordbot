@@ -10,7 +10,7 @@ namespace DSH.DiscordBot.Bots.Converters
         public string Convert(Hero hero)
         {
             if (hero == null)
-                return "А героя та нема";
+                return "Hero is not exist";
 
             StringBuilder sb = new StringBuilder();
 
@@ -18,7 +18,7 @@ namespace DSH.DiscordBot.Bots.Converters
 
             if (!(hero.Builds?.Any() ?? false))
             {
-                sb.AppendLine("Билдов нема");
+                sb.AppendLine("No one build was added");
             }
             else
             {
@@ -36,14 +36,16 @@ namespace DSH.DiscordBot.Bots.Converters
             var enumerable = heroes as Hero[] ?? heroes?.ToArray();
 
             if (!(enumerable?.Any() ?? false))
-                return "А героев та нема";
+                return "No one hero was added";
 
             StringBuilder sb = new StringBuilder();
             foreach (var hero in enumerable)
             {
+                var commands = (hero.Aliases ?? new string[0]).ToList();
+                commands.Add(hero.Name);
+                
                 sb.AppendLine($"`{hero.Name}`");
-                sb.AppendLine($"Commands: {hero.Name.ToLowerInvariant()}, " +
-                              $"{string.Join(", ", hero.Aliases ?? new string[0]).ToLowerInvariant()}");
+                sb.AppendLine($"Commands: {string.Join(", ", commands).ToLowerInvariant()}");
                 sb.AppendLine($"Builds: {hero.Builds?.Count() ?? 0}");
                 sb.AppendLine();
             }

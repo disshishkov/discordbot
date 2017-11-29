@@ -36,6 +36,14 @@ namespace DSH.DiscordBot.Bots
             return _storage.Value.Fetch<Hero>(_ => _.Id == id).FirstOrDefault();
         }
 
+        public Hero GetHeroByAlias(string alias)
+        {
+            if (string.IsNullOrWhiteSpace(alias))
+                throw new ArgumentNullException(nameof(alias));
+
+            return _storage.Value.Fetch<Hero>(_ => _.Name == alias || _.Aliases.Contains(alias)).FirstOrDefault();
+        }
+
         public IEnumerable<Hero> GetHeroes()
         {
             _log.Value.Info("Getting heroes list");

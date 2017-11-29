@@ -21,7 +21,7 @@ namespace DSH.DiscordBot.Tests.Bots
         public void Convert_Hero_Returns_Specific_Message_If_Hero_Is_Null()
         {
             var value = _converter.Convert((Hero)null);
-            Assert.AreEqual("А героя та нема", value);
+            Assert.AreEqual("Hero is not exist", value);
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace DSH.DiscordBot.Tests.Bots
                 Name = "TestHero",
                 Builds = null
             });
-            Assert.AreEqual($"`TestHero`{Environment.NewLine}Билдов нема{Environment.NewLine}", value);
+            Assert.AreEqual($"`TestHero`{Environment.NewLine}No one build was added{Environment.NewLine}", value);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace DSH.DiscordBot.Tests.Bots
                 Name = "TestHero",
                 Builds = new List<Build>()
             });
-            Assert.AreEqual($"`TestHero`{Environment.NewLine}Билдов нема{Environment.NewLine}", value);
+            Assert.AreEqual($"`TestHero`{Environment.NewLine}No one build was added{Environment.NewLine}", value);
         }
 
         [Test]
@@ -79,14 +79,14 @@ namespace DSH.DiscordBot.Tests.Bots
         public void Convert_Heroes_Returns_Specific_Message_If_Hero_Is_Null()
         {
             var value = _converter.Convert((IEnumerable<Hero>)null);
-            Assert.AreEqual("А героев та нема", value);
+            Assert.AreEqual("No one hero was added", value);
         }
 
         [Test]
         public void Convert_Heroes_Returns_Specific_Message_If_Hero_Is_Empty()
         {
             var value = _converter.Convert(new List<Hero>());
-            Assert.AreEqual("А героев та нема", value);
+            Assert.AreEqual("No one hero was added", value);
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace DSH.DiscordBot.Tests.Bots
                 }
             });
 
-            Assert.IsTrue(value.Contains("Commands: testhero, testalias"));
+            Assert.IsTrue(value.Contains("Commands: testalias, testhero"));
         }
 
         [Test]

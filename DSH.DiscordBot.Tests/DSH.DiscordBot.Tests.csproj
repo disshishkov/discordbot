@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Bots\HeroTextConverterTests.cs" />
     <Compile Include="Bots\HotsHeroesBotTests.cs" />
+    <Compile Include="DiscordServiceTests.cs" />
     <Compile Include="Infrastructure\ConfigTests.cs" />
     <Compile Include="Sources\ScrapingSourceTests.cs" />
     <Compile Include="..\AssemblyInfo.Common.cs">
@@ -66,9 +67,17 @@
       <Project>{A45E8FA9-3AFD-4A36-A5FD-8E5D367CAB2C}</Project>
       <Name>DSH.DiscordBot.Bots</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DSH.DiscordBot.Clients\DSH.DiscordBot.Clients.csproj">
+      <Project>{BD02D105-CD26-4870-A21B-23AEFEB24399}</Project>
+      <Name>DSH.DiscordBot.Clients</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DSH.DiscordBot.Contract\DSH.DiscordBot.Contract.csproj">
       <Project>{cfb56956-c13c-4833-af51-905124090b85}</Project>
       <Name>DSH.DiscordBot.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DSH.DiscordBot.Host\DSH.DiscordBot.Host.csproj">
+      <Project>{365209B7-C0D3-4383-BA41-11955722D483}</Project>
+      <Name>DSH.DiscordBot.Host</Name>
     </ProjectReference>
     <ProjectReference Include="..\DSH.DiscordBot.Infrastructure\DSH.DiscordBot.Infrastructure.csproj">
       <Project>{A34E40E6-FEFA-4E29-A158-97D6E40F9131}</Project>

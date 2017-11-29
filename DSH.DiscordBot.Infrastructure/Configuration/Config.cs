@@ -14,7 +14,6 @@ namespace DSH.DiscordBot.Infrastructure.Configuration
 
         public string Token => _settings.Value.Get()["Token"];
         public string DbConnectionString => _settings.Value.Get()["DbConnectionString"];
-        public string AdminName => _settings.Value.Get()["AdminName"];
         public string CommandPrefix => _settings.Value.Get()["CommandPrefix"];
 
         public IEnumerable<string> Sources

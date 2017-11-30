@@ -11,6 +11,7 @@ namespace DSH.DiscordBot.Storage
         void Update<T>(T entity);
         void Update<T>(IEnumerable<T> entities);
         void Delete<T>(Expression<Func<T, bool>> predicate);
+        void Drop<T>();
         List<T> Fetch<T>(Expression<Func<T, bool>> predicate);
         List<T> All<T>();
     }

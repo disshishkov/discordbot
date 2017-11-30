@@ -22,9 +22,13 @@ namespace DSH.DiscordBot.Bots.Converters
             }
             else
             {
-                foreach (var build in hero.Builds)
+                foreach (var builds in hero.Builds.GroupBy(_ => _.Source))
                 {
-                    sb.AppendLine($"{build.Title} - {build.Url}");
+                    sb.AppendLine($"**{builds.Key}**");
+                    foreach (var build in builds)
+                    {
+                        sb.AppendLine($"{build.Title} - {build.Url}");
+                    }
                 }
             }
 
@@ -41,8 +45,7 @@ namespace DSH.DiscordBot.Bots.Converters
             StringBuilder sb = new StringBuilder();
             foreach (var hero in enumerable)
             {
-                var commands = (hero.Aliases ?? new string[0]).ToList();
-                commands.Add(hero.Name);
+                var commands = (hero.Aliases ?? new string[0]).Concat(new []{hero.Name});
                 
                 sb.AppendLine($"`{hero.Name}`");
                 sb.AppendLine($"Commands: {string.Join(", ", commands).ToLowerInvariant()}");

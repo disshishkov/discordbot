@@ -166,6 +166,39 @@ namespace DSH.DiscordBot.Tests.Bots
             Assert.IsNotNull(heroes);
             Assert.IsNotEmpty(heroes);
         }
+        
+        [Test]
+        public void DeleteHero_Throws_If_Name_Is_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.DeleteHero(null);
+            });
+        }
+
+        [Test]
+        public void DeleteHero_Throws_If_Name_Is_Empty()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.DeleteHero(string.Empty);
+            });
+        }
+
+        [Test]
+        public void DeleteHero_Throws_If_Name_Is_WhiteSpace()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.DeleteHero("    ");
+            });
+        }
+
+        [Test]
+        public void DeleteHero_Can_Delete()
+        {
+            _bot.DeleteHero("Test");
+        }
 
         [Test]
         public void ParseBuild_Return_Default_If_String_Is_Null()

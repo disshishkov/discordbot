@@ -53,6 +53,7 @@
     </Compile>
     <Compile Include="Commands\AdminCommands.cs" />
     <Compile Include="Commands\HeroesCommands.cs" />
+    <Compile Include="DependenciesResolver.cs" />
     <Compile Include="DiscordClient.cs" />
     <Compile Include="IDiscordClient.cs" />
   </ItemGroup>

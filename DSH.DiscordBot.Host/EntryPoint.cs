@@ -19,6 +19,10 @@ namespace DSH.DiscordBot.Host
         private static void Main()
         {
             var container = EntryPoint.RegisterDependencies();
+            DependenciesResolver.Set(
+                container.Resolve<IHeroTextConverter>(),
+                container.Resolve<ISource>(),
+                container.Resolve<IHotsHeroesBot>());
 
             var log = container.Resolve<ILog>();
 

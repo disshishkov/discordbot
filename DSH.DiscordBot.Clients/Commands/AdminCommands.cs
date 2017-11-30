@@ -39,6 +39,26 @@ namespace DSH.DiscordBot.Clients.Commands
             await ctx.RespondAsync(DiscordEmoji.FromName(ctx.Client, ":ok:"));
         }
         
+        [Command("delete")]
+        public async Task Delete(CommandContext ctx, string heroName)
+        {
+            await ctx.TriggerTypingAsync();
+
+            _hotsHeroesBot.Value.DeleteHero(heroName);
+
+            await ctx.RespondAsync(DiscordEmoji.FromName(ctx.Client, ":ok:"));
+        }
+        
+        [Command("drop")]
+        public async Task Drop(CommandContext ctx)
+        {
+            await ctx.TriggerTypingAsync();
+
+            _hotsHeroesBot.Value.DeleteAllHeroes();
+
+            await ctx.RespondAsync(DiscordEmoji.FromName(ctx.Client, ":ok:"));
+        }
+        
         [Command("add_alias")]
         public async Task AddAlias(CommandContext ctx, string heroName, string alias)
         {

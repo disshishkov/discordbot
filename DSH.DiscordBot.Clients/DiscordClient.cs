@@ -27,8 +27,9 @@ namespace DSH.DiscordBot.Clients
             var commandService = _client.UseCommandsNext(new CommandsNextConfiguration()
             {
                 CaseSensitive = false,
-                EnableDefaultHelp = true,
-                StringPrefix = cfg.Value.CommandPrefix
+                EnableDefaultHelp = false,
+                StringPrefix = cfg.Value.CommandPrefix,
+                Dependencies = DependenciesResolver.GetDependencies()
             });
             
             commandService.RegisterCommands<AdminCommands>();

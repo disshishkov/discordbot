@@ -56,6 +56,25 @@ namespace DSH.DiscordBot.Tests.Bots
 
             Assert.IsTrue(value.Contains("`TestHero`"));
         }
+        
+        [Test]
+        public void Convert_Hero_Contains_Source()
+        {
+            var value = _converter.Convert(new Hero()
+            {
+                Name = "TestHero",
+                Builds = new [] {
+                    new Build()
+                    {
+                        Title = "TestBuild",
+                        Url = new Uri("http://test.ru/"),
+                        Source = "TestSource"
+                    }
+                }
+            });
+
+            Assert.IsTrue(value.Contains("**TestSource**"));
+        }
 
         [Test]
         public void Convert_Hero_Contains_Build()
@@ -71,8 +90,7 @@ namespace DSH.DiscordBot.Tests.Bots
                     }
                 }
             });
-
-            Assert.AreEqual($"`TestHero`{Environment.NewLine}TestBuild - http://test.ru/{Environment.NewLine}", value);
+            Assert.IsTrue(value.Contains("TestBuild - http://test.ru/"));
         }
 
         [Test]

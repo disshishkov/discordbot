@@ -11,7 +11,7 @@ namespace DSH.DiscordBot.Clients.Commands
     public sealed class HeroesCommands
     {
         // Discord has a 2000 lenght limit for the one message.
-        private const int MaxMessageLenght = 2000;
+        private const int MaxMessageLenght = 1999;
         
         private readonly Lazy<IHotsHeroesBot> _hotsHeroesBot;
         private readonly Lazy<IHeroTextConverter> _heroesConverter;

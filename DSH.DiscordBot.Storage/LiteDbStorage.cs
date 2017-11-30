@@ -101,6 +101,18 @@ namespace DSH.DiscordBot.Storage
             _db?.Delete(predicate);
         }
 
+        public void Drop<T>()
+        {
+            var collectionName = _db?.Database?.Mapper?.ResolveCollectionName(typeof(T));
+            
+            if (string.IsNullOrWhiteSpace(collectionName))
+                throw new ArgumentNullException(nameof(collectionName));
+                
+            _log.Value.Debug($"Drop collection {collectionName}");
+            
+            _db?.Database?.DropCollection(collectionName);
+        }
+
         public List<T> Fetch<T>(Expression<Func<T, bool>> predicate)
         {
             if (predicate == null)

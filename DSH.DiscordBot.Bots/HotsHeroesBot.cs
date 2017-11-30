@@ -40,8 +40,13 @@ namespace DSH.DiscordBot.Bots
         {
             if (string.IsNullOrWhiteSpace(alias))
                 throw new ArgumentNullException(nameof(alias));
+            
+            _log.Value.Info("Getting hero by alias'{0}'", alias);
 
-            return _storage.Value.Fetch<Hero>(_ => _.Name == alias || _.Aliases.Contains(alias)).FirstOrDefault();
+            alias = alias.ToUpperInvariant();
+            
+            return _storage.Value.Fetch<Hero>(_ => _.Id == alias || (_.Aliases ?? new string[0]).Contains(alias))
+                .FirstOrDefault();
         }
 
         public IEnumerable<Hero> GetHeroes()
@@ -49,6 +54,18 @@ namespace DSH.DiscordBot.Bots
             _log.Value.Info("Getting heroes list");
 
             return _storage.Value.All<Hero>();
+        }
+
+        public void DeleteHero(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+            
+            _log.Value.Info("Deleting hero '{0}'", name);
+            
+            var id = GetId(name);
+            
+            _storage.Value.Delete<Hero>(_ => _.Id == id);
         }
 
         public void SaveAlias(string heroName, string alias)
@@ -60,6 +77,7 @@ namespace DSH.DiscordBot.Bots
 
             _log.Value.Info("Adding alias '{0}' to hero '{1}'", alias, heroName);
 
+            alias = alias.ToUpperInvariant();
             var hero = GetHero(heroName);
 
             if (hero == null)
@@ -184,6 +202,13 @@ namespace DSH.DiscordBot.Bots
                     _storage.Value.Update(heroInStorage);
                 }
             }
+        }
+
+        public void DeleteAllHeroes()
+        {
+            _log.Value.Info("Delete all heroes");
+            
+            _storage.Value.Drop<Hero>();
         }
 
         public Build ParseBuild(string buildStr)

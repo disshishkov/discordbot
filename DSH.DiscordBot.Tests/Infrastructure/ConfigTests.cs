@@ -25,7 +25,7 @@ namespace DSH.DiscordBot.Tests.Infrastructure
                     {"DbConnectionString", "TestDb"},
                     {"AdminName", "TestAdmin"},
                     {"CommandPrefix", "!"},
-                    {"Sources", "Source1|Source2"}
+                    {"Sources", "http://Source1.com|http://Source2.com"}
                 });
 
             _config = CreateConfig();
@@ -64,8 +64,8 @@ namespace DSH.DiscordBot.Tests.Infrastructure
             Assert.IsNotNull(_config.Sources);
             Assert.IsNotEmpty(_config.Sources);
             Assert.AreEqual(2, _config.Sources.Count());
-            Assert.AreEqual("Source1", _config.Sources.FirstOrDefault());
-            Assert.AreEqual("Source2", _config.Sources.LastOrDefault());
+            Assert.AreEqual("http://source1.com/", _config.Sources.FirstOrDefault()?.ToString());
+            Assert.AreEqual("http://source2.com/", _config.Sources.LastOrDefault()?.ToString());
         }
 
         [Test]

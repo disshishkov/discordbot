@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DSH.DiscordBot.Infrastructure.Configuration
 {
@@ -16,7 +17,7 @@ namespace DSH.DiscordBot.Infrastructure.Configuration
         public string DbConnectionString => _settings.Value.Get()["DbConnectionString"];
         public string CommandPrefix => _settings.Value.Get()["CommandPrefix"];
 
-        public IEnumerable<string> Sources
+        public IEnumerable<Uri> Sources
         {
             get
             {
@@ -24,7 +25,8 @@ namespace DSH.DiscordBot.Infrastructure.Configuration
 
                 return string.IsNullOrWhiteSpace(sourcesStr)
                     ? null
-                    : sourcesStr.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+                    : sourcesStr.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(url => new Uri(url));
             }
         }
     }

@@ -9,6 +9,7 @@ using DSH.DiscordBot.Infrastructure.Logging;
 using DSH.DiscordBot.Infrastructure.Serialization;
 using DSH.DiscordBot.Infrastructure.Web;
 using DSH.DiscordBot.Sources;
+using DSH.DiscordBot.Sources.Scraping;
 using DSH.DiscordBot.Storage;
 using Topshelf;
 
@@ -99,6 +100,14 @@ namespace DSH.DiscordBot.Host
 
             builder.RegisterType<HttpClient>()
                 .As<IClient>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<HappyzergScraper>()
+                .Named<IScraper>("HAPPYZERG.RU")
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<RobogrubScraper>()
+                .Named<IScraper>("WWW.ROBOGRUB.COM")
                 .InstancePerLifetimeScope();
 
             return builder.Build();

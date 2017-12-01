@@ -121,7 +121,7 @@ namespace DSH.DiscordBot.Bots
 
             _log.Value.Info("Adding build '{0}' to hero '{1}'", build.Title, heroName);
 
-            var hero = GetHero(heroName);
+            var hero = GetHeroByAlias(heroName);
 
             if (hero == null)
             {
@@ -199,6 +199,7 @@ namespace DSH.DiscordBot.Bots
                         .ToArray();
 
                     heroInStorage.Builds = builds;
+                    heroInStorage.ImageUrl = hero.ImageUrl;
                     _storage.Value.Update(heroInStorage);
                 }
             }

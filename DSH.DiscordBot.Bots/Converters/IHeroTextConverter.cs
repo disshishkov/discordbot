@@ -6,6 +6,6 @@ namespace DSH.DiscordBot.Bots.Converters
     public interface IHeroTextConverter
     {
         string Convert(Hero hero);
-        string Convert(IEnumerable<Hero> heroes);
+        IEnumerable<string> Convert(IEnumerable<Hero> heroes);
     }
 }

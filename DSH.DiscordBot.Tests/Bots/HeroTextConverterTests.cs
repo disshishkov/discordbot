@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DSH.DiscordBot.Bots.Converters;
 using DSH.DiscordBot.Contract.Dto;
+using DSH.DiscordBot.Infrastructure.Configuration;
+using Moq;
 using NUnit.Framework;
 
 namespace DSH.DiscordBot.Tests.Bots
@@ -11,10 +14,24 @@ namespace DSH.DiscordBot.Tests.Bots
     {
         private IHeroTextConverter _converter;
 
+        private Mock<IConfig> _configMock;
+
         [SetUp]
         public void Init()
         {
-            _converter = new HeroTextConverter();
+            _configMock = new Mock<IConfig>(MockBehavior.Loose);
+            _configMock.SetupGet(_ => _.HeroesCountInList).Returns(1);
+            
+            _converter = CreateConvertor();
+        }
+        
+        [Test]
+        public void Throws_If_IConfig_Is_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _converter = CreateConvertor(isIIConfigNull: true);
+            });
         }
 
         [Test]
@@ -97,14 +114,14 @@ namespace DSH.DiscordBot.Tests.Bots
         public void Convert_Heroes_Returns_Specific_Message_If_Hero_Is_Null()
         {
             var value = _converter.Convert((IEnumerable<Hero>)null);
-            Assert.AreEqual("No one hero was added", value);
+            Assert.AreEqual("No one hero was added", value?.FirstOrDefault());
         }
 
         [Test]
         public void Convert_Heroes_Returns_Specific_Message_If_Hero_Is_Empty()
         {
             var value = _converter.Convert(new List<Hero>());
-            Assert.AreEqual("No one hero was added", value);
+            Assert.AreEqual("No one hero was added", value?.FirstOrDefault());
         }
 
         [Test]
@@ -118,7 +135,7 @@ namespace DSH.DiscordBot.Tests.Bots
                 }
             });
 
-            Assert.IsTrue(value.Contains("`TestHero`"));
+            Assert.IsTrue(value?.FirstOrDefault()?.Contains("`TestHero`"));
         }
 
         [Test]
@@ -133,7 +150,7 @@ namespace DSH.DiscordBot.Tests.Bots
                 }
             });
 
-            Assert.IsTrue(value.Contains("Commands: testalias, testhero"));
+            Assert.IsTrue(value?.FirstOrDefault()?.Contains("Commands: testalias, testhero"));
         }
 
         [Test]
@@ -151,7 +168,7 @@ namespace DSH.DiscordBot.Tests.Bots
                 }
             });
 
-            Assert.IsTrue(value.Contains("Builds: 1"));
+            Assert.IsTrue(value?.FirstOrDefault()?.Contains("Builds: 1"));
         }
 
         [Test]
@@ -166,7 +183,7 @@ namespace DSH.DiscordBot.Tests.Bots
                 }
             });
 
-            Assert.IsTrue(value.Contains("Builds: 0"));
+            Assert.IsTrue(value?.FirstOrDefault()?.Contains("Builds: 0"));
         }
 
         [Test]
@@ -181,7 +198,38 @@ namespace DSH.DiscordBot.Tests.Bots
                 }
             });
 
-            Assert.IsTrue(value.Contains("Builds: 0"));
+            Assert.IsTrue(value?.FirstOrDefault()?.Contains("Builds: 0"));
+        }
+        
+        [Test]
+        public void Convert_Heroes_Can_Split()
+        {
+            var value = _converter.Convert(new List<Hero>()
+            {
+                new Hero()
+                {
+                    Name = "TestHero1",
+                    Builds = new List<Build>()
+                },
+                new Hero()
+                {
+                    Name = "TestHero2",
+                    Builds = new List<Build>()
+                }
+            });
+            
+            var enumerable = value as string[] ?? value.ToArray();
+            
+            Assert.AreEqual(2, enumerable.Length);
+            Assert.IsTrue(enumerable.FirstOrDefault()?.Contains("`TestHero1`"));
+            Assert.IsTrue(enumerable.LastOrDefault()?.Contains("`TestHero2`"));
+        }
+        
+        private IHeroTextConverter CreateConvertor(
+            bool isIIConfigNull = false)
+        {
+            return new HeroTextConverter(
+                isIIConfigNull ? null : new Lazy<IConfig>(() => _configMock.Object));
         }
     }
 }

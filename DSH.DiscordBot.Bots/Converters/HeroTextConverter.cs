@@ -1,12 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DSH.DiscordBot.Contract.Dto;
+using DSH.DiscordBot.Infrastructure.Configuration;
 
 namespace DSH.DiscordBot.Bots.Converters
 {
     public sealed class HeroTextConverter : IHeroTextConverter
     {
+        private readonly Lazy<IConfig> _config;
+        
+        public HeroTextConverter(Lazy<IConfig> config)
+        {
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+        }
+
         public string Convert(Hero hero)
         {
             if (hero == null)
@@ -35,25 +44,36 @@ namespace DSH.DiscordBot.Bots.Converters
             return sb.ToString();
         }
 
-        public string Convert(IEnumerable<Hero> heroes)
+        public IEnumerable<string> Convert(IEnumerable<Hero> heroes)
         {
             var enumerable = heroes as Hero[] ?? heroes?.ToArray();
 
             if (!(enumerable?.Any() ?? false))
-                return "No one hero was added";
+                yield return "No one hero was added";
 
-            StringBuilder sb = new StringBuilder();
-            foreach (var hero in enumerable)
+            foreach (var chunckedHeroes in Split(enumerable, _config.Value.HeroesCountInList))
             {
-                var commands = (hero.Aliases ?? new string[0]).Concat(new []{hero.Name});
+                StringBuilder sb = new StringBuilder();
+                foreach (var hero in chunckedHeroes)
+                {
+                    var commands = (hero.Aliases ?? new string[0]).Concat(new []{hero.Name});
                 
-                sb.AppendLine($"`{hero.Name}`");
-                sb.AppendLine($"Commands: {string.Join(", ", commands).ToLowerInvariant()}");
-                sb.AppendLine($"Builds: {hero.Builds?.Count() ?? 0}");
-                sb.AppendLine();
-            }
+                    sb.AppendLine($"`{hero.Name}`");
+                    sb.AppendLine($"Commands: {string.Join(", ", commands).ToLowerInvariant()}");
+                    sb.AppendLine($"Builds: {hero.Builds?.Count() ?? 0}");
+                    sb.AppendLine();
+                }
 
-            return sb.ToString();
+                yield return sb.ToString();
+            }
+        }
+        
+        private static IEnumerable<IEnumerable<T>> Split<T>(IReadOnlyCollection<T> array, int size)
+        {
+            for (var i = 0; i < (float)array.Count / size; i++)
+            {
+                yield return array.Skip(i * size).Take(size);
+            }
         }
     }
 }

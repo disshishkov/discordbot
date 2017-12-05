@@ -26,6 +26,7 @@ namespace DSH.DiscordBot.Tests.Infrastructure
                     {"DbConnectionString", "TestDb"},
                     {"AdminName", "TestAdmin"},
                     {"CommandPrefix", "!"},
+                    {"HeroesCountInList", "25"},
                     {"Sources", "Scraping=http://Source1.com|Api=http://Source2.com"}
                 });
 
@@ -57,6 +58,12 @@ namespace DSH.DiscordBot.Tests.Infrastructure
         public void Can_Obtain_CommandPrefix()
         {
             Assert.AreEqual("!", _config.CommandPrefix);
+        }
+        
+        [Test]
+        public void Can_Obtain_HeroesCountInList()
+        {
+            Assert.AreEqual(25, _config.HeroesCountInList);
         }
 
         [Test]

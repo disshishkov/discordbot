@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -10,9 +9,6 @@ namespace DSH.DiscordBot.Clients.Commands
 {
     public sealed class HeroesCommands
     {
-        // Discord has a 2000 lenght limit for the one message.
-        private const int MaxMessageLenght = 1999;
-        
         private readonly Lazy<IHotsHeroesBot> _hotsHeroesBot;
         private readonly Lazy<IHeroTextConverter> _heroesConverter;
         
@@ -31,7 +27,7 @@ namespace DSH.DiscordBot.Clients.Commands
 
             var answer = _heroesConverter.Value.Convert(_hotsHeroesBot.Value.GetHeroes());
 
-            foreach (var msg in ChunksUpto(answer, MaxMessageLenght))
+            foreach (var msg in answer)
             {
                 await ctx.RespondAsync(msg);
             }
@@ -46,12 +42,6 @@ namespace DSH.DiscordBot.Clients.Commands
 
             await ctx.RespondAsync(_heroesConverter.Value.Convert(
                 _hotsHeroesBot.Value.GetHeroByAlias(alias)));
-        }
-        
-        private static IEnumerable<string> ChunksUpto(string str, int maxChunkSize)
-        {
-            for (int i = 0; i < str.Length; i += maxChunkSize)
-                yield return str.Substring(i, Math.Min(maxChunkSize, str.Length-i));
         }
     }
 }

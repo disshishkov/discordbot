@@ -9,5 +9,6 @@ namespace DSH.DiscordBot.Infrastructure.Configuration
         string Token { get; }
         string DbConnectionString { get; }
         string CommandPrefix { get; }
+        int HeroesCountInList { get; }
     }
 }

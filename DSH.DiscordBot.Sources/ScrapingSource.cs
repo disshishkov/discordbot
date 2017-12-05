@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Autofac.Features.Indexed;
 using DSH.DiscordBot.Contract.Dto;
-using DSH.DiscordBot.Infrastructure.Configuration;
 using DSH.DiscordBot.Infrastructure.Logging;
 using DSH.DiscordBot.Infrastructure.Serialization;
 using DSH.DiscordBot.Infrastructure.Web;
@@ -14,38 +13,37 @@ namespace DSH.DiscordBot.Sources
     public sealed class ScrapingSource : ISource
     {
         private readonly Lazy<ILog> _log;
-        private readonly Lazy<IConfig> _config;
         private readonly Lazy<ISerializer> _serializer;
         private readonly Lazy<IClient> _client;
         private readonly IIndex<string, IScraper> _scraperFactory;
 
         public ScrapingSource(
             Lazy<ILog> log,
-            Lazy<IConfig> config,
             Lazy<ISerializer> serializer,
             Lazy<IClient> client,
             IIndex<string, IScraper> scraperFactory)
         {
             _log = log ?? throw new ArgumentNullException(nameof(log));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _scraperFactory = scraperFactory ?? throw new ArgumentNullException(nameof(scraperFactory));
         }
 
-        public IEnumerable<Hero> GetHeroes()
+        public IEnumerable<Hero> GetHeroes(IEnumerable<Source> sources)
         {
             var heroes = new List<Hero>();
 
             _log.Value.Info("Starting get heroes from the web sources");
 
-            var sourceUrls = _config.Value.Sources;
-
-            if (sourceUrls == null)
+            if (sources == null)
                 return heroes;
 
-            foreach (var url in sourceUrls)
+            foreach (var source in sources)
             {
+                if (source?.Type != SourceType.Scraping)
+                    continue;
+                
+                var url = source.Url;
                 if (url == null)
                     continue;
 
@@ -54,9 +52,9 @@ namespace DSH.DiscordBot.Sources
                 var html = new HtmlDocument();
                 html.LoadHtml(_client.Value.GetString(url.ToString()).Result);
 
-                var source = url.Host.ToUpperInvariant();
+                var sourceName = url.Host.ToUpperInvariant();
                 
-                heroes.AddRange(_scraperFactory[source].ParseHeroes(html.DocumentNode, source));
+                heroes.AddRange(_scraperFactory[sourceName].ParseHeroes(html.DocumentNode, sourceName));
             }
 
             _log.Value.Debug(

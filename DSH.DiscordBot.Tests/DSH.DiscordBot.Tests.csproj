@@ -56,6 +56,7 @@
     <Compile Include="Bots\HotsHeroesBotTests.cs" />
     <Compile Include="DiscordServiceTests.cs" />
     <Compile Include="Infrastructure\ConfigTests.cs" />
+    <Compile Include="Sources\ApiSourceTests.cs" />
     <Compile Include="Sources\ScrapingSourceTests.cs" />
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>

@@ -5,6 +5,6 @@ namespace DSH.DiscordBot.Sources
 {
     public interface ISource
     {
-        IEnumerable<Hero> GetHeroes();
+        IEnumerable<Hero> GetHeroes(IEnumerable<Source> sources);
     }
 }

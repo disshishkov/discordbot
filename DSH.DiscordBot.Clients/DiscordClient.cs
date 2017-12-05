@@ -19,7 +19,7 @@ namespace DSH.DiscordBot.Clients
             
             _client = new DSharpPlus.DiscordClient(new DiscordConfiguration()
             {
-                LogLevel = LogLevel.Critical,
+                LogLevel = LogLevel.Warning,
                 TokenType = TokenType.Bot,
                 Token = cfg.Value.Token
             });

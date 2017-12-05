@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSH.DiscordBot.Bots;
+using DSH.DiscordBot.Contract.Dto;
+using DSH.DiscordBot.Infrastructure.Configuration;
 using DSH.DiscordBot.Sources;
 
 namespace DSH.DiscordBot.Clients.Commands
@@ -12,12 +16,17 @@ namespace DSH.DiscordBot.Clients.Commands
     public sealed class AdminCommands
     {
         private readonly Lazy<IHotsHeroesBot> _hotsHeroesBot;
-        private readonly Lazy<ISource> _source;
+        private readonly Lazy<IConfig> _config;
+        private readonly Lazy<IDictionary<SourceType, ISource>> _sourceFactory;
         
-        public AdminCommands(Lazy<IHotsHeroesBot> hotsHeroesBot, Lazy<ISource> source)
+        public AdminCommands(
+            Lazy<IHotsHeroesBot> hotsHeroesBot,
+            Lazy<IConfig> config,
+            Lazy<IDictionary<SourceType, ISource>> sourceFactory)
         {
             _hotsHeroesBot = hotsHeroesBot ?? throw new ArgumentNullException(nameof(hotsHeroesBot));
-            _source = source ?? throw new ArgumentNullException(nameof(source));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _sourceFactory = sourceFactory ?? throw new ArgumentNullException(nameof(sourceFactory));
         }
 
         [Command("ping")]
@@ -27,6 +36,14 @@ namespace DSH.DiscordBot.Clients.Commands
             
             var emoji = DiscordEmoji.FromName(ctx.Client, ":ping_pong:");
             await ctx.RespondAsync($"{emoji} Pong! Ping: {ctx.Client.Ping}ms");
+            
+            /*
+            var embed = new DiscordEmbedBuilder
+            {
+                Title = "Aba",
+                ImageUrl = "http://www.heroesfire.com/images/wikibase/icon/heroes/abathur.png"
+            };
+            await ctx.RespondAsync(embed: embed);*/
         }
         
         [Command("update")]
@@ -34,7 +51,18 @@ namespace DSH.DiscordBot.Clients.Commands
         {
             await ctx.TriggerTypingAsync();
 
-            _hotsHeroesBot.Value.SaveHeroes(_source.Value.GetHeroes());
+            var sources = _config.Value.Sources;
+            if (sources != null)
+            {
+                var heroes = new List<Hero>();
+
+                foreach (var groupedSources in sources.GroupBy(_ => _.Type))
+                {
+                    heroes.AddRange(_sourceFactory.Value[groupedSources.Key].GetHeroes(groupedSources));
+                }
+                
+                _hotsHeroesBot.Value.SaveHeroes(heroes);
+            }
 
             await ctx.RespondAsync(DiscordEmoji.FromName(ctx.Client, ":ok:"));
         }

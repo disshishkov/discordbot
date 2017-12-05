@@ -73,7 +73,7 @@ namespace DSH.DiscordBot.Tests.Bots
                 }
             });
 
-            Assert.IsTrue(value.Contains("**TestSource**"));
+            Assert.IsTrue(value.Contains("**testsource**"));
         }
 
         [Test]

@@ -24,7 +24,7 @@ namespace DSH.DiscordBot.Clients.Commands
         
         [Command("list")]
         [Description("Provides the list of available builds")]
-        [Aliases("l", "tierlist")]
+        [Aliases("l", "tierlist", "л")]
         public async Task List(CommandContext ctx)
         {
             await ctx.TriggerTypingAsync();
@@ -39,7 +39,7 @@ namespace DSH.DiscordBot.Clients.Commands
         
         [Command("build")]
         [Description("Gets build for a specific hero")]
-        [Aliases("b")]
+        [Aliases("b", "б")]
         public async Task Build(CommandContext ctx, string alias)
         {
             await ctx.TriggerTypingAsync();

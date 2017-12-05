@@ -108,7 +108,7 @@ namespace DSH.DiscordBot.Bots
             }
         }
 
-        public void SaveBuild(string heroName, Build build)
+        public string SaveBuild(string heroName, Build build)
         {
             if (string.IsNullOrWhiteSpace(heroName))
                 throw new ArgumentNullException(nameof(heroName));
@@ -127,11 +127,13 @@ namespace DSH.DiscordBot.Bots
             {
                 _log.Value.Debug("Hero '{0}' is absent need to create a new", heroName);
 
-                InsertHero(new Hero()
+                hero = new Hero()
                 {
                     Name = heroName,
                     Builds = new[] {build}
-                });
+                };
+
+                InsertHero(hero);
             }
             else
             {
@@ -149,6 +151,8 @@ namespace DSH.DiscordBot.Bots
 
                 _storage.Value.Update(hero);
             }
+
+            return hero.Name;
         }
 
         public void SaveHeroes(IEnumerable<Hero> heroes)
@@ -165,6 +169,8 @@ namespace DSH.DiscordBot.Bots
                 if (hero.Builds == null)
                     continue;
 
+                var heroName = hero.Name;
+
                 foreach (var build in hero.Builds)
                 {
                     if (string.IsNullOrWhiteSpace(build.Source))
@@ -172,7 +178,7 @@ namespace DSH.DiscordBot.Bots
                     if (build.Url == null)
                         continue;
 
-                    SaveBuild(hero.Name, build);
+                    heroName = SaveBuild(hero.Name, build);
 
                     if (!addedBuilds.ContainsKey(build.Source))
                     {
@@ -186,14 +192,14 @@ namespace DSH.DiscordBot.Bots
 
                 _log.Value.Debug("Added builds for hero '{1}':{0}{2}",
                     Environment.NewLine,
-                    hero.Name,
+                    heroName,
                     _serializer.Value.Serialize(addedBuilds));
 
                 foreach (var addedBuild in addedBuilds)
                 {
-                    _log.Value.Info("Clear old builds for hero '{0}' from source '{1}'", hero.Name, addedBuild.Key);
+                    _log.Value.Info("Clear old builds for hero '{0}' from source '{1}'", heroName, addedBuild.Key);
 
-                    var heroInStorage = GetHero(hero.Name);
+                    var heroInStorage = GetHero(heroName);
                     var builds = heroInStorage.Builds
                         .Where(_ => _.Source != addedBuild.Key || addedBuild.Value.Contains(_.Url.AbsoluteUri))
                         .ToArray();

@@ -24,7 +24,7 @@ namespace DSH.DiscordBot.Bots.Converters
             {
                 foreach (var builds in hero.Builds.GroupBy(_ => _.Source))
                 {
-                    sb.AppendLine($"**{builds.Key.ToLowerInvariant()}**");
+                    sb.AppendLine($"**{builds.Key?.ToLowerInvariant()}**");
                     foreach (var build in builds)
                     {
                         sb.AppendLine($"{build.Title} - {build.Url}");

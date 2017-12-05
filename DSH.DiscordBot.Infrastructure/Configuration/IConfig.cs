@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DSH.DiscordBot.Contract.Dto;
 
 namespace DSH.DiscordBot.Infrastructure.Configuration
 {
     public interface IConfig
     {
-        IEnumerable<Uri> Sources { get; }
+        IEnumerable<Source> Sources { get; }
         string Token { get; }
         string DbConnectionString { get; }
         string CommandPrefix { get; }

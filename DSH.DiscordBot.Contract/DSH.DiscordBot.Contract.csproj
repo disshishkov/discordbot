@@ -39,6 +39,8 @@
   <ItemGroup>
     <Compile Include="Dto\Build.cs" />
     <Compile Include="Dto\Hero.cs" />
+    <Compile Include="Dto\Source.cs" />
+    <Compile Include="Dto\SourceType.cs" />
     <Folder Include="Properties" />
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>

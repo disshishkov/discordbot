@@ -390,11 +390,12 @@ namespace DSH.DiscordBot.Tests.Bots
         [Test]
         public void SaveBuild_Can_Save_Build()
         {
-            _bot.SaveBuild("name", new Build()
+            var heroName = _bot.SaveBuild("Test", new Build()
             {
                 Url = new Uri("http://test.ru/"),
                 Title = "Test"
             });
+            Assert.AreEqual("Test", heroName);
         }
 
         private IHotsHeroesBot CreateBot(

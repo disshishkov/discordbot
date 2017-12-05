@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Linq;
+using DSH.DiscordBot.Contract.Dto;
 using DSH.DiscordBot.Infrastructure.Configuration;
 using Moq;
 using NUnit.Framework;
@@ -25,7 +26,7 @@ namespace DSH.DiscordBot.Tests.Infrastructure
                     {"DbConnectionString", "TestDb"},
                     {"AdminName", "TestAdmin"},
                     {"CommandPrefix", "!"},
-                    {"Sources", "http://Source1.com|http://Source2.com"}
+                    {"Sources", "Scraping=http://Source1.com|Api=http://Source2.com"}
                 });
 
             _config = CreateConfig();
@@ -64,8 +65,18 @@ namespace DSH.DiscordBot.Tests.Infrastructure
             Assert.IsNotNull(_config.Sources);
             Assert.IsNotEmpty(_config.Sources);
             Assert.AreEqual(2, _config.Sources.Count());
-            Assert.AreEqual("http://source1.com/", _config.Sources.FirstOrDefault()?.ToString());
-            Assert.AreEqual("http://source2.com/", _config.Sources.LastOrDefault()?.ToString());
+            Assert.AreEqual("http://source1.com/", _config.Sources.FirstOrDefault()?.Url.ToString());
+            Assert.AreEqual("http://source2.com/", _config.Sources.LastOrDefault()?.Url.ToString());
+        }
+        
+        [Test]
+        public void Can_Obtain_Sources_Type()
+        {
+            Assert.IsNotNull(_config.Sources);
+            Assert.IsNotEmpty(_config.Sources);
+            Assert.AreEqual(2, _config.Sources.Count());
+            Assert.AreEqual(SourceType.Scraping, _config.Sources.FirstOrDefault()?.Type);
+            Assert.AreEqual(SourceType.Api, _config.Sources.LastOrDefault()?.Type);
         }
 
         [Test]

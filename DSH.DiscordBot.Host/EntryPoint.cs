@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using DSH.DiscordBot.Bots;
 using DSH.DiscordBot.Bots.Converters;
 using DSH.DiscordBot.Clients;
+using DSH.DiscordBot.Contract.Dto;
 using DSH.DiscordBot.Host.Service;
 using DSH.DiscordBot.Infrastructure.Configuration;
 using DSH.DiscordBot.Infrastructure.Logging;
@@ -20,11 +22,9 @@ namespace DSH.DiscordBot.Host
         private static void Main()
         {
             var container = EntryPoint.RegisterDependencies();
-            DependenciesResolver.Set(
-                container.Resolve<IHeroTextConverter>(),
-                container.Resolve<ISource>(),
-                container.Resolve<IHotsHeroesBot>());
 
+            SetDiscordSharpDependencies(container);
+            
             var log = container.Resolve<ILog>();
 
             Console.WriteLine("DiscordBot starting");
@@ -52,6 +52,19 @@ namespace DSH.DiscordBot.Host
                 log.Fatal(e);
                 throw;
             }
+        }
+
+        //TODO: fix in 4.0 I need this fucked shit becayse DSharp+ has own DI container.
+        private static void SetDiscordSharpDependencies(IComponentContext container)
+        {
+            var sources = new Dictionary<SourceType, ISource>();
+            sources.Add(SourceType.Api, container.ResolveKeyed<ISource>(SourceType.Api));
+            sources.Add(SourceType.Scraping, container.ResolveKeyed<ISource>(SourceType.Scraping));
+            DependenciesResolver.Set(
+                container.Resolve<IHeroTextConverter>(),
+                sources,
+                container.Resolve<IHotsHeroesBot>(),
+                container.Resolve<IConfig>());
         }
 
         private static IContainer RegisterDependencies()
@@ -93,13 +106,17 @@ namespace DSH.DiscordBot.Host
             builder.RegisterType<DiscordClient>()
                 .As<IDiscordClient>()
                 .InstancePerLifetimeScope();
-
-            builder.RegisterType<ScrapingSource>()
-                .As<ISource>()
-                .InstancePerLifetimeScope();
-
+            
             builder.RegisterType<HttpClient>()
                 .As<IClient>()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<ScrapingSource>()
+                .Keyed<ISource>(SourceType.Scraping)
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<ApiSource>()
+                .Keyed<ISource>(SourceType.Api)
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<HappyzergScraper>()

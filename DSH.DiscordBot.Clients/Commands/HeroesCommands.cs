@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using DSH.DiscordBot.Bots;
 using DSH.DiscordBot.Bots.Converters;
 
@@ -40,8 +43,42 @@ namespace DSH.DiscordBot.Clients.Commands
         {
             await ctx.TriggerTypingAsync();
 
-            await ctx.RespondAsync(_heroesConverter.Value.Convert(
-                _hotsHeroesBot.Value.GetHeroByAlias(alias)));
+            var hero = _hotsHeroesBot.Value.GetHeroByAlias(alias);
+
+            if (hero == null)
+            {
+                await ctx.RespondAsync("Hero is not exist");
+            }
+            else
+            {
+                var embed = new DiscordEmbedBuilder
+                {
+                    Title = hero.Name,
+                    ThumbnailUrl = hero.ImageUrl?.AbsoluteUri,
+                    Color = DiscordColor.Gray
+                };
+
+                if (!(hero.Builds?.Any() ?? false))
+                {
+                    embed.Description = "No one build was added";
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var builds in hero.Builds.GroupBy(_ => _.Source))
+                    {
+                        sb.AppendLine("");
+                        sb.AppendLine($"**{builds.Key?.ToLowerInvariant()}**");
+                        foreach (var build in builds)
+                        {
+                            sb.AppendLine($"{build.Title} - {build.Url}");
+                        }
+                    }
+                    embed.Description = sb.ToString();
+                }
+
+                await ctx.RespondAsync(embed: embed);
+            }
         }
     }
 }

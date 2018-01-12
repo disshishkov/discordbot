@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using DSH.DiscordBot.Contract.Dto;
 using DSH.DiscordBot.Infrastructure.Configuration;
 using DSH.DiscordBot.Infrastructure.Logging;
 using DSH.DiscordBot.Infrastructure.Serialization;
@@ -41,9 +43,7 @@ namespace DSH.DiscordBot.Storage
                 throw new ArgumentNullException(nameof(entity));
 
             _log.Value.Debug(
-                "Inserted a new entity:{1}{0}",
-                _serializer.Value.Serialize(entity),
-                Environment.NewLine);
+                $"Inserted a new entity:{Environment.NewLine}{_serializer.Value.Serialize(entity)}");
 
             _db?.Insert(entity);
         }
@@ -56,9 +56,7 @@ namespace DSH.DiscordBot.Storage
                 throw new ArgumentNullException(nameof(entities));
 
             _log.Value.Debug(
-                "Inserted a new entities:{1}{0}",
-                _serializer.Value.Serialize(enumerable),
-                Environment.NewLine);
+                $"Inserted a new entities:{Environment.NewLine}{_serializer.Value.Serialize(enumerable)}");
 
             _db?.Insert(enumerable);
         }
@@ -69,9 +67,7 @@ namespace DSH.DiscordBot.Storage
                 throw new ArgumentNullException(nameof(entity));
 
             _log.Value.Debug(
-                "Updated existing entity to:{1}{0}",
-                _serializer.Value.Serialize(entity),
-                Environment.NewLine);
+                $"Updated existing entity to:{Environment.NewLine}{_serializer.Value.Serialize(entity)}");
 
             _db?.Update(entity);
         }
@@ -84,9 +80,7 @@ namespace DSH.DiscordBot.Storage
                 throw new ArgumentNullException(nameof(entities));
 
             _log.Value.Debug(
-                "Updated existing entities to:{1}{0}",
-                _serializer.Value.Serialize(enumerable),
-                Environment.NewLine);
+                $"Updated existing entities to:{Environment.NewLine}{_serializer.Value.Serialize(enumerable)}");
 
             _db?.Update(enumerable);
         }
@@ -111,6 +105,19 @@ namespace DSH.DiscordBot.Storage
             _log.Value.Debug($"Drop collection {collectionName}");
             
             _db?.Database?.DropCollection(collectionName);
+
+            var files = _db?.Database?.FileStorage.FindAll()?.ToArray();
+
+            if (files != null)
+            {
+                _log.Value.Debug($"Drop {files.Length} files");
+                
+                foreach (var file in files)
+                {
+                    _log.Value.Trace($"Delete {file.Id} file");
+                    _db?.Database?.FileStorage.Delete(file.Id);
+                }
+            }
         }
 
         public List<T> Fetch<T>(Expression<Func<T, bool>> predicate)
@@ -130,11 +137,70 @@ namespace DSH.DiscordBot.Storage
             return _db?.Fetch<T>();
         }
 
+        public void InsertData(string id, byte[] data)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentNullException(nameof(id));
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            _log.Value.Debug($"InsertData with id {id}");
+            
+            using (var ms = new MemoryStream(data))
+            {
+                try
+                {
+                    _db?.Database?.FileStorage.Upload(id, null, ms);
+                }
+                catch (Exception e)
+                {
+                    _log.Value.Error(e);
+                }
+            }
+        }
+
+        public void DeleteData(string id)
+        {
+            _log.Value.Debug($"DeleteData with id {id}");
+            
+            var files = _db?.Database?.FileStorage.Find(id);
+
+            if (files != null)
+            {
+                foreach (var file in files)
+                {
+                    _db?.Database?.FileStorage.Delete(file.Id);
+                }
+            }
+        }
+
+        public byte[] GetData(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentNullException(nameof(id));
+
+            _log.Value.Debug($"GetData for id {id}");
+            
+            var file = _db?.Database?.FileStorage.FindById(id);
+            if (file == null)
+                return null;
+            
+            using (var ms = new MemoryStream())
+            {
+                file.CopyTo(ms);
+                return ms.ToArray();
+            }
+        }
+
         private static void Configure()
         {
-            BsonMapper.Global.RegisterType(
+            var mapper = BsonMapper.Global;
+            
+            mapper.RegisterType(
                 (uri) => uri.AbsoluteUri,
                 (bson) => new Uri(bson.AsString));
+
+            mapper.Entity<Build>().Ignore(_ => _.Screen);
         }
     }
 }

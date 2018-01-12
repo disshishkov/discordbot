@@ -225,5 +225,11 @@ namespace DSH.DiscordBot.Sources.Api.Entities
         
         [JsonProperty("Dehaka")]
         public Hero Dehaka { get; set; }
+        
+        [JsonProperty("Hanzo")]
+        public Hero Hanzo { get; set; }
+        
+        [JsonProperty("Blaze")]
+        public Hero Blaze { get; set; }
     }
 }

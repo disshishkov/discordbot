@@ -111,6 +111,10 @@ namespace DSH.DiscordBot.Host
                 .As<IClient>()
                 .InstancePerLifetimeScope();
             
+            builder.RegisterType<SiteScreenshoter>()
+                .As<IScreenshoter>()
+                .InstancePerLifetimeScope();
+            
             builder.RegisterType<ScrapingSource>()
                 .Keyed<ISource>(SourceType.Scraping)
                 .InstancePerLifetimeScope();

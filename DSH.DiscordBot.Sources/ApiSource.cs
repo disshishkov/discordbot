@@ -45,7 +45,7 @@ namespace DSH.DiscordBot.Sources
                 if (url == null)
                     continue;
 
-                _log.Value.Info("Get heroes from {0}", url);
+                _log.Value.Info($"Get heroes from {url}");
                 
                 var sourceName = url.Host.ToUpperInvariant();
 
@@ -129,6 +129,8 @@ namespace DSH.DiscordBot.Sources
                         SaveHero(sourceName, heroesFromApi.Zarya, ref heroes);
                         SaveHero(sourceName, heroesFromApi.Zeratul, ref heroes);
                         SaveHero(sourceName, heroesFromApi.ZulJin, ref heroes);
+                        SaveHero(sourceName, heroesFromApi.Hanzo, ref heroes);
+                        SaveHero(sourceName, heroesFromApi.Blaze, ref heroes);
                     }
                 }
                 catch (Exception e)
@@ -138,9 +140,7 @@ namespace DSH.DiscordBot.Sources
             }
 
             _log.Value.Debug(
-                "Scrapped heroes:{1}{0}",
-                _serializer.Value.Serialize(heroes),
-                Environment.NewLine);
+                $"Scrapped heroes:{Environment.NewLine}{_serializer.Value.Serialize(heroes)}");
 
             return heroes;
         }

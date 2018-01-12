@@ -5,6 +5,7 @@ using DSH.DiscordBot.Bots;
 using DSH.DiscordBot.Contract.Dto;
 using DSH.DiscordBot.Infrastructure.Logging;
 using DSH.DiscordBot.Infrastructure.Serialization;
+using DSH.DiscordBot.Infrastructure.Web;
 using DSH.DiscordBot.Storage;
 using Moq;
 using NUnit.Framework;
@@ -19,6 +20,7 @@ namespace DSH.DiscordBot.Tests.Bots
         private Mock<ILog> _logMock;
         private Mock<ISerializer> _serializerMock;
         private Mock<IStorage> _storageMock;
+        private Mock<IScreenshoter> _screenshoterMock;
 
         [SetUp]
         public void Init()
@@ -28,7 +30,10 @@ namespace DSH.DiscordBot.Tests.Bots
             _serializerMock = new Mock<ISerializer>(MockBehavior.Loose);
             _serializerMock.Setup(_ => _.Serialize(It.IsAny<object>()))
                 .Returns("TestSerializer");
-
+            
+            _screenshoterMock = new Mock<IScreenshoter>(MockBehavior.Loose);
+            _screenshoterMock.Setup(_ => _.Take(It.IsAny<Uri>())).Returns(() => new byte[0]);
+            
             var hero = new Hero()
             {
                 Name = "Test",
@@ -48,8 +53,8 @@ namespace DSH.DiscordBot.Tests.Bots
             _storageMock = new Mock<IStorage>(MockBehavior.Loose);
             _storageMock.Setup(_ => _.Fetch(It.IsAny<Expression<Func<Hero, bool>>>()))
                 .Returns(() => new List<Hero>() { hero });
-            _storageMock.Setup(_ => _.All<Hero>())
-                .Returns(() => new List<Hero>() { hero });
+            _storageMock.Setup(_ => _.All<Hero>()).Returns(() => new List<Hero>() { hero });
+            _storageMock.Setup(_ => _.GetData(It.IsAny<string>())).Returns(() => null);
 
             _bot = CreateBot();
         }
@@ -78,6 +83,15 @@ namespace DSH.DiscordBot.Tests.Bots
             Assert.Throws<ArgumentNullException>(() =>
             {
                 _bot = CreateBot(isIStorageNull: true);
+            });
+        }
+        
+        [Test]
+        public void Throws_If_IScreenshoter_Is_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot = CreateBot(isIScreenshoterNull: true);
             });
         }
 
@@ -401,12 +415,14 @@ namespace DSH.DiscordBot.Tests.Bots
         private IHotsHeroesBot CreateBot(
             bool isILogNull = false,
             bool isISerializerNull = false,
-            bool isIStorageNull = false)
+            bool isIStorageNull = false,
+            bool isIScreenshoterNull = false)
         {
             return new HotsHeroesBot(
                 isILogNull ? null : new Lazy<ILog>(() => _logMock.Object),
                 isISerializerNull ? null : new Lazy<ISerializer>(() => _serializerMock.Object),
-                isIStorageNull ? null : new Lazy<IStorage>(() => _storageMock.Object));
+                isIStorageNull ? null : new Lazy<IStorage>(() => _storageMock.Object),
+                isIScreenshoterNull ? null : new Lazy<IScreenshoter>(() => _screenshoterMock.Object));
         }
     }
 }

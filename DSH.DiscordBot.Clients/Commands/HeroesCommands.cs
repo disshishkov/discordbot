@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,7 +37,7 @@ namespace DSH.DiscordBot.Clients.Commands
                 await ctx.RespondAsync(msg);
             }
         }
-        
+
         [Command("build")]
         [Description("Gets build for a specific hero")]
         [Aliases("b", "б")]
@@ -51,6 +53,7 @@ namespace DSH.DiscordBot.Clients.Commands
             }
             else
             {
+                var screens = new List<(string title, byte[] data)>();
                 var embed = new DiscordEmbedBuilder
                 {
                     Title = hero.Name,
@@ -72,12 +75,25 @@ namespace DSH.DiscordBot.Clients.Commands
                         foreach (var build in builds)
                         {
                             sb.AppendLine($"{build.Title} - {build.Url}");
+                            if (build.Screen != null)
+                            {
+                                screens.Add((build.Title, build.Screen));
+                            }
                         }
                     }
                     embed.Description = sb.ToString();
                 }
 
                 await ctx.RespondAsync(embed: embed);
+                
+                foreach (var screen in screens)
+                {
+                    await ctx.RespondAsync($"`{screen.title}`");
+                    using (var ms = new MemoryStream(screen.data))
+                    {
+                        await ctx.RespondWithFileAsync(ms, $"{Guid.NewGuid()}.jpeg");
+                    }
+                }
             }
         }
     }

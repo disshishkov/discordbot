@@ -33,8 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LiteDB, Version=4.0.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
-      <HintPath>..\packages\LiteDB.4.0.0\lib\net40\LiteDB.dll</HintPath>
+    <Reference Include="LiteDB, Version=4.1.1.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
+      <HintPath>..\packages\LiteDB.4.1.1\lib\net40\LiteDB.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,6 +49,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DSH.DiscordBot.Contract\DSH.DiscordBot.Contract.csproj">
+      <Project>{CFB56956-C13C-4833-AF51-905124090B85}</Project>
+      <Name>DSH.DiscordBot.Contract</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DSH.DiscordBot.Infrastructure\DSH.DiscordBot.Infrastructure.csproj">
       <Project>{A34E40E6-FEFA-4E29-A158-97D6E40F9131}</Project>
       <Name>DSH.DiscordBot.Infrastructure</Name>

@@ -31,7 +31,7 @@ namespace DSH.DiscordBot.Sources.Scraping
 
                 if (!string.IsNullOrWhiteSpace(name) && builds != null)
                 {
-                    _log.Value.Debug("Scrapped builds for hero '{0}'", name);
+                    _log.Value.Debug($"Scrapped builds for hero '{name}'");
 
                     heroes.Add(new Hero()
                     {

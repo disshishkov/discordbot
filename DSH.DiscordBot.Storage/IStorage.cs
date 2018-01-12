@@ -14,5 +14,8 @@ namespace DSH.DiscordBot.Storage
         void Drop<T>();
         List<T> Fetch<T>(Expression<Func<T, bool>> predicate);
         List<T> All<T>();
+        void InsertData(string id, byte[] data);
+        void DeleteData(string id);
+        byte[] GetData(string id);
     }
 }

@@ -47,7 +47,7 @@ namespace DSH.DiscordBot.Sources
                 if (url == null)
                     continue;
 
-                _log.Value.Info("Get heroes from {0}", url);
+                _log.Value.Info($"Get heroes from {url}");
 
                 var html = new HtmlDocument();
                 html.LoadHtml(_client.Value.GetString(url.ToString()).Result);
@@ -58,9 +58,7 @@ namespace DSH.DiscordBot.Sources
             }
 
             _log.Value.Debug(
-                "Scrapped heroes:{1}{0}",
-                _serializer.Value.Serialize(heroes),
-                Environment.NewLine);
+                $"Scrapped heroes:{Environment.NewLine}{_serializer.Value.Serialize(heroes)}");
 
             return heroes;
         }

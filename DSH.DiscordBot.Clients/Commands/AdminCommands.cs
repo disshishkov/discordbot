@@ -36,14 +36,6 @@ namespace DSH.DiscordBot.Clients.Commands
             
             var emoji = DiscordEmoji.FromName(ctx.Client, ":ping_pong:");
             await ctx.RespondAsync($"{emoji} Pong! Ping: {ctx.Client.Ping}ms");
-            
-            /*
-            var embed = new DiscordEmbedBuilder
-            {
-                Title = "Aba",
-                ImageUrl = "http://www.heroesfire.com/images/wikibase/icon/heroes/abathur.png"
-            };
-            await ctx.RespondAsync(embed: embed);*/
         }
         
         [Command("update")]
@@ -106,6 +98,16 @@ namespace DSH.DiscordBot.Clients.Commands
             _hotsHeroesBot.Value.SaveBuild(heroName, build);
             
             await ctx.RespondAsync($"`{build.Title}` build was succesfully added to hero `{heroName}`");
+        }
+        
+        [Command("add_screen")]
+        public async Task AddScreen(CommandContext ctx, string heroName, string buildUrl)
+        {
+            await ctx.TriggerTypingAsync();
+
+            _hotsHeroesBot.Value.SaveScreen(heroName, buildUrl);
+            
+            await ctx.RespondAsync($"Screenshot was succesfully added to hero `{heroName}`");
         }
     }
 }

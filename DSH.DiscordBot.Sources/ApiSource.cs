@@ -56,81 +56,12 @@ namespace DSH.DiscordBot.Sources
 
                     if (heroesFromApi != null)
                     {
-                        SaveHero(sourceName, heroesFromApi.Abathur, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Alarak, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Alexstrasza, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Ana, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Anubarak, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Artanis, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Arthas, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Auriel, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Azmodan, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Brightwing, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Butcher, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Cassia, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Chen, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Cho, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Chromie, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Dehaka, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Diablo, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Dva, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Etc, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Falstad, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Gall, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Garrosh, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Gazlowe, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Genji, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Greymane, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.GulDan, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Hammer, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Illidan, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Jaina, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Johanna, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Junkrat, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Kaelthas, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.KelThuzad, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Kerrigan, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Kharazim, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Leoric, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.LiLi, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.LiMing, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Lucio, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Lunara, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Malfurion, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Malthael, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Medivh, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Morales, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Muradin, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Murky, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Nazeebo, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Nova, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Probius, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Ragnaros, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Raynor, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Rehgar, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Rexxar, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Samuro, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Sonya, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Stitches, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Stukov, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Sylvanas, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Tassadar, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Thrall, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Tlv, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Tracer, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Tychus, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Tyrael, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Tyrande, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Uther, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Valeera, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Xul, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Zagara, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Zarya, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Zarya, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Zeratul, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.ZulJin, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Hanzo, ref heroes);
-                        SaveHero(sourceName, heroesFromApi.Blaze, ref heroes);
+                        foreach (var property in heroesFromApi.GetType().GetProperties())
+                        {
+                            var hero = GetHero(sourceName, (Api.Entities.Hero)property.GetValue(heroesFromApi));
+                            if (hero != null)
+                                heroes.Add(hero);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -145,24 +76,23 @@ namespace DSH.DiscordBot.Sources
             return heroes;
         }
 
-        private static void SaveHero(string sourceName, Api.Entities.Hero hero, ref List<Hero> heroes)
+        private static Hero GetHero(string sourceName, Api.Entities.Hero hero)
         {
-            if (hero != null && hero.Builds?.Length > 0
-                && !string.IsNullOrWhiteSpace(hero.Name))
+            if (string.IsNullOrWhiteSpace(hero?.Name) || !(hero.Builds?.Length > 0)) 
+                return null;
+            
+            var name = NormalizeName(hero.Name);
+            return new Hero()
             {
-                var name = NormalizeName(hero.Name);
-                heroes.Add(new Hero()
+                Name = name,
+                ImageUrl = new Uri($"http://www.heroesfire.com/images/wikibase/icon/heroes/{name}.png"),
+                Builds = hero.Builds.Select(_ => new Build()
                 {
-                    Name = name,
-                    ImageUrl = new Uri($"http://www.heroesfire.com/images/wikibase/icon/heroes/{name}.png"),
-                    Builds = hero.Builds.Select(_ => new Build()
-                    {
-                        Source = sourceName,
-                        Title = _.Name,
-                        Url = new Uri(_.Url)
-                    })
-                });
-            }
+                    Source = sourceName,
+                    Title = _.Name,
+                    Url = new Uri(_.Url)
+                })
+            };
         }
 
         private static string NormalizeName(string name)

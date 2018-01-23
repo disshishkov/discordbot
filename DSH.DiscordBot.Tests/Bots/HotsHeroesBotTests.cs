@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using DSH.DiscordBot.Bots;
 using DSH.DiscordBot.Contract.Dto;
@@ -54,7 +55,7 @@ namespace DSH.DiscordBot.Tests.Bots
             _storageMock.Setup(_ => _.Fetch(It.IsAny<Expression<Func<Hero, bool>>>()))
                 .Returns(() => new List<Hero>() { hero });
             _storageMock.Setup(_ => _.All<Hero>()).Returns(() => new List<Hero>() { hero });
-            _storageMock.Setup(_ => _.GetData(It.IsAny<string>())).Returns(() => null);
+            _storageMock.Setup(_ => _.GetData(It.IsAny<string>())).Returns(() => new byte[0]);
 
             _bot = CreateBot();
         }
@@ -171,6 +172,76 @@ namespace DSH.DiscordBot.Tests.Bots
             var hero = _bot.GetHeroByAlias("t");
             Assert.IsNotNull(hero);
             Assert.AreEqual("Test", hero.Name);
+        }
+        
+        [Test]
+        public void GetHeroByAlias_Can_Take_Build_Screenshot()
+        {
+            var hero = _bot.GetHeroByAlias("t");
+            Assert.IsNotNull(hero);
+            var build = hero.Builds?.FirstOrDefault();
+            Assert.IsNotNull(build);
+            Assert.IsNotNull(build.Screen);
+        }
+        
+        [Test]
+        public void SaveScreen_Throws_If_HeroName_Is_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.SaveScreen(null, "http://duc.ru");
+            });
+        }
+
+        [Test]
+        public void SaveScreen_Throws_If_HeroName_Is_Empty()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.SaveScreen(string.Empty, "http://duc.ru");
+            });
+        }
+
+        [Test]
+        public void SaveScreen_Throws_If_HeroName_Is_WhiteSpace()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.SaveScreen("    ", "http://duc.ru");
+            });
+        }
+        
+        [Test]
+        public void SaveScreen_Throws_If_Url_Is_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.SaveScreen("hero", null);
+            });
+        }
+
+        [Test]
+        public void SaveScreen_Throws_If_Url_Is_Empty()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.SaveScreen("hero", string.Empty);
+            });
+        }
+
+        [Test]
+        public void SaveScreen_Throws_If_Url_Is_WhiteSpace()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                _bot.SaveScreen("hero", "    ");
+            });
+        }
+
+        [Test]
+        public void SaveScreen_Can_Save()
+        {
+            _bot.SaveScreen("hero", "http://duc.ru");
         }
 
         [Test]

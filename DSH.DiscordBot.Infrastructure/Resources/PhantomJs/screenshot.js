@@ -9,7 +9,7 @@ if (url.indexOf("heroesfire.com") >= 0)
 }
 else if (url.indexOf("blizzardheroes.ru") >= 0)
 {
-    clip = { top: 840, left: 15, width: 370, height: 525 };
+    clip = { top: 860, left: 15, width: 370, height: 525 };
 }
 else if (url.indexOf("psionic-storm.com") >= 0)
 {

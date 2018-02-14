@@ -231,5 +231,8 @@ namespace DSH.DiscordBot.Sources.Api.Entities
         
         [JsonProperty("Blaze")]
         public Hero Blaze { get; set; }
+        
+        [JsonProperty("Maiev")]
+        public Hero Maiev { get; set; }
     }
 }
